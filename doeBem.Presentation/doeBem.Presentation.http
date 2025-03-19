@@ -1,0 +1,6 @@
+@doeBem.Presentation_HostAddress = http://localhost:5129
+
+GET {{doeBem.Presentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
