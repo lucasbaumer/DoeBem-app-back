@@ -13,7 +13,7 @@ Clone o projeto
 Entre no diretório do projeto
 
 ```bash
-  cd doebem.Presentation
+  cd doeBem.Presentation
 ```
 
 Inicie o servidor
