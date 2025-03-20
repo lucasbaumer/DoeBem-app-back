@@ -11,7 +11,7 @@ Clone o projeto:
 ```bash
   git clone https://github.com/lucasbaumer/DoeBem-app-back.git
 ```
-  **por ssh**
+  **por SSH**
 ```bash
   git clone git@github.com:lucasbaumer/DoeBem-app-back.git
 ```
