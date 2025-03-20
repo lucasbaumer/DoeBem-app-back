@@ -22,10 +22,11 @@ Inicie o servidor
   dotnet run
 ```
 
-Acessar endpoints via Swagger (web)
+Após iniciar o projeto, acesse a interface Swagger através do seguinte link:
 
+📌 **Nota:** Substitua `PORTA` pela porta que aparece no terminal ao rodar a aplicação.
 ```bash
-  http://localhost:[porta-que-foi-iniciada]/swagger/index.html
+   http://localhost:PORTA/swagger/index.html/swagger/index.html
 ```
 
 
