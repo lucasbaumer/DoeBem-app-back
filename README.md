@@ -4,13 +4,15 @@
 
 ## Rodando o Projeto
 
-Clone o projeto por HTTPS
+Clone o projeto: 
+
+**por HTTPS**
 
 ```bash
   git clone https://github.com/lucasbaumer/DoeBem-app-back.git
 ```
-  Ou por ssh
-  ```bash
+  **por ssh**
+```bash
   git clone git@github.com:lucasbaumer/DoeBem-app-back.git
 ```
 
