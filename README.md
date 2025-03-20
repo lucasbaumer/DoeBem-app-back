@@ -22,6 +22,12 @@ Inicie o servidor
   dotnet run
 ```
 
+Acessar endpoints via Swagger (web)
+
+```bash
+  http://localhost:[porta-que-foi-iniciada]/swagger/index.html
+```
+
 
 ## Autores
 
