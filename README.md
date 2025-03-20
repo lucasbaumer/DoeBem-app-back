@@ -1,6 +1,5 @@
 
-# Doe Bem - Aplicativo
-
+# Doe Bem - Back-end
 
 
 ## Rodando o Projeto
@@ -14,30 +13,14 @@ Clone o projeto
 Entre no diretório do projeto
 
 ```bash
-  cd my-project
-```
-
-Instalar Dependencias
-
-```bash
-  npm install
-```
-Se Estiver em um ios
-
-```bash
-cd ios
-pod install
+  cd doebem.Presentation
 ```
 
 Inicie o servidor
 
 ```bash
-  npm run android || npm run ios
+  dotnet run
 ```
-
-
-
-
 
 
 ## Autores
