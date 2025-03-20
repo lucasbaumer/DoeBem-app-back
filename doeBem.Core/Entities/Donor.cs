@@ -28,6 +28,6 @@ namespace doeBem.Core.Entities
         public DateTime DateOfBirth { get; set; }
 
         [Required]
-        public string PasswordHash { get; set; }
+        public string PasswordCript { get; set; }
     }
 }

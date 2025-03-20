@@ -13,10 +13,12 @@ namespace doeBem.Application.Services
     public class DonorService : IDonorService
     {
         private readonly IDonorRepository _donorRepository;
+        private readonly EncryptService _encryptService;
 
         public DonorService(IDonorRepository donorRepository)
         {
             _donorRepository = donorRepository;
+            _encryptService = new EncryptService("chaveSecreta");
         }
 
         public async Task<bool> DeleteDonor(Guid id)
@@ -42,7 +44,7 @@ namespace doeBem.Application.Services
                 throw new Exception("Data de nascimento inválida");
             }
 
-            string hashedPassword = HashPassword(dto.Password);
+            string encryptedPassoword = _encryptService.Encrypt(dto.Password);
 
             var donor = new Donor
             {
@@ -52,7 +54,7 @@ namespace doeBem.Application.Services
                 Cpf = dto.Cpf,
                 Phone = dto.Phone,
                 DateOfBirth = dateOfBirth,
-                PasswordHash = hashedPassword
+                PasswordCript = encryptedPassoword
             };
 
             await _donorRepository.AddAsync(donor);
@@ -77,22 +79,17 @@ namespace doeBem.Application.Services
             return true;
         }
 
-        private string HashPassword(string password)
+        public async Task<bool> ValidatePassword(Guid id, string password)
         {
-            byte[] salt = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
+            var donor = await _donorRepository.GetByIdAsync(id);
+            if(donor == null)
             {
-                rng.GetBytes(salt);
+                return false;
             }
 
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
+            string decryptedPassword = _encryptService.Decrypt(donor.PasswordCript);
 
-            return hashed;
+            return decryptedPassword == password;
         }
     }
 }
