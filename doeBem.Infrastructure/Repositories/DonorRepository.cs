@@ -43,5 +43,10 @@ namespace doeBem.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<Donor> GetByEmailAsync(string email)
+        {
+            return await _context.Donors.FirstOrDefaultAsync(e => e.Email == email); 
+        }
     }
 }

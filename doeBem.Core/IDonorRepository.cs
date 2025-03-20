@@ -13,6 +13,7 @@ namespace doeBem.Core
         Task DeleteAsync(Guid id);
         Task UpdateAsync(Donor donor);
         Task<Donor> GetByIdAsync(Guid id);
+        Task<Donor> GetByEmailAsync(string email);
         Task<IEnumerable<Donor>> GetAllAsync();
     }
 }

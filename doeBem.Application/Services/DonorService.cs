@@ -79,6 +79,18 @@ namespace doeBem.Application.Services
             return true;
         }
 
+        public async Task<bool> LoginAsync(string email, string password)
+        {
+            var donor = await _donorRepository.GetByEmailAsync(email);
+            if(donor == null)
+            {
+                return false;
+            }
+
+            string decryptedPassword = _encryptService.Decrypt(donor.PasswordCript);
+            return decryptedPassword == password;
+        }
+
         public async Task<bool> ValidatePassword(Guid id, string password)
         {
             var donor = await _donorRepository.GetByIdAsync(id);
