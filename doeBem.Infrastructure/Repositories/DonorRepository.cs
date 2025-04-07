@@ -1,5 +1,5 @@
-﻿using doeBem.Core;
-using doeBem.Core.Entities;
+﻿using doeBem.Core.Entities;
+using doeBem.Core.Interfaces;
 using doeBem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

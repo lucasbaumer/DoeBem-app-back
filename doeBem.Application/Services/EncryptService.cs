@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace doeBem.Application
+namespace doeBem.Application.Services
 {
     public class EncryptService
     {
@@ -37,7 +37,7 @@ namespace doeBem.Application
 
         public string Decrypt(string encryptedText)
         {
-            using(Aes aesAlg = Aes.Create())
+            using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = _key;
                 aesAlg.IV = _iv;
@@ -49,5 +49,5 @@ namespace doeBem.Application
             }
         }
     }
-  
+
 }

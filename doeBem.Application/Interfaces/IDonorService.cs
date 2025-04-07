@@ -12,8 +12,8 @@ namespace doeBem.Application.Interfaces
     {
         Task<Donor> GetByIdAsync(Guid id);
         Task<IEnumerable<Donor>> GetAllAsync();
-        Task<Guid> RegisterDonor(DonorCreateDTO dto);
-        Task<bool> UpdateDonor(Guid id, DonorUpdateDTO updateDto);
+        Task<Guid> RegisterDonor(DonorCreateDTO CreateDonorDto);
+        Task<bool> UpdateDonor(Guid id, DonorUpdateDTO updateDonorDto);
         Task<bool> DeleteDonor(Guid id);
         Task<bool> LoginAsync(string email, string passoword);
     }

@@ -1,7 +1,7 @@
 ﻿using doeBem.Application.DTOS;
 using doeBem.Application.Interfaces;
-using doeBem.Core;
 using doeBem.Core.Entities;
+using doeBem.Core.Interfaces;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using System.Collections.Generic;
@@ -37,22 +37,22 @@ namespace doeBem.Application.Services
             return await _donorRepository.GetByIdAsync(id);
         }
 
-        public async Task<Guid> RegisterDonor(DonorCreateDTO dto)
+        public async Task<Guid> RegisterDonor(DonorCreateDTO registerDonorDto)
         {
-            if (!DateTime.TryParse(dto.DateOfBirth, out DateTime dateOfBirth))
+            if (!DateTime.TryParse(registerDonorDto.DateOfBirth, out DateTime dateOfBirth))
             {
                 throw new Exception("Data de nascimento inválida");
             }
 
-            string encryptedPassoword = _encryptService.Encrypt(dto.Password);
+            string encryptedPassoword = _encryptService.Encrypt(registerDonorDto.Password);
 
             var donor = new Donor
             {
                 Id = Guid.NewGuid(),
-                Name = dto.Name,
-                Email = dto.Email,
-                Cpf = dto.Cpf,
-                Phone = dto.Phone,
+                Name = registerDonorDto.Name,
+                Email = registerDonorDto.Email,
+                Cpf = registerDonorDto.Cpf,
+                Phone = registerDonorDto.Phone,
                 DateOfBirth = dateOfBirth,
                 PasswordCript = encryptedPassoword
             };

@@ -1,6 +1,6 @@
 using doeBem.Application.Interfaces;
 using doeBem.Application.Services;
-using doeBem.Core;
+using doeBem.Core.Interfaces;
 using doeBem.Infrastructure;
 using doeBem.Infrastructure.Data;
 using doeBem.Infrastructure.Repositories;
@@ -19,6 +19,8 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 
 builder.Services.AddScoped<IDonorService, DonorService>();
 builder.Services.AddScoped<IDonorRepository, DonorRepository>();
+builder.Services.AddScoped<IHospitalRepository, HospitalRepository>();
+builder.Services.AddScoped<IHospitalService, HospitalService>();
 
 builder.Services.AddControllers();
 

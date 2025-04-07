@@ -20,9 +20,21 @@ namespace doeBem.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Donor>> GetAllDonors()
+        public async Task<ActionResult<Donor>> GetAllDonors()
         {
-            return await _donorService.GetAllAsync();
+            var donors = await _donorService.GetAllAsync();
+
+            if(donors == null)
+            {
+                return NotFound("Nenhum Doador encontrado");
+            }
+
+            if (!donors.Any())
+            {
+                return NotFound("A lista de doadores está vazia");
+            }
+
+            return Ok(donors);
         }
 
         [HttpGet("{id}")]
@@ -38,12 +50,12 @@ namespace doeBem.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterDonor(DonorCreateDTO donorCreate)
+        public async Task<IActionResult> RegisterDonor(DonorCreateDTO donorCreateDto)
         {
             try
             {
-                var donorId = await _donorService.RegisterDonor(donorCreate);
-                return CreatedAtAction(nameof(GetDonorById), new { id = donorId }, donorCreate);
+                var donorId = await _donorService.RegisterDonor(donorCreateDto);
+                return CreatedAtAction(nameof(GetDonorById), new { id = donorId }, donorCreateDto);
             }
             catch (Exception ex)
             {
@@ -52,11 +64,11 @@ namespace doeBem.Presentation.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDonor(Guid id, DonorUpdateDTO updateDto)
+        public async Task<IActionResult> UpdateDonor(Guid id, DonorUpdateDTO DonorUpdateDto)
         {
             try
             {
-                var result = await _donorService.UpdateDonor(id, updateDto);
+                var result = await _donorService.UpdateDonor(id, DonorUpdateDto);
                 return result ? Ok("Doador atualizado com sucesso!") : BadRequest("Erro ao atualizar doador!");
             }
             catch (Exception ex)
@@ -67,6 +79,7 @@ namespace doeBem.Presentation.Controllers
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDonor(Guid id)
+            
         {
             var result = await _donorService.DeleteDonor(id);
             if (result)

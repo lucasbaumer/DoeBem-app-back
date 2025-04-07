@@ -11,6 +11,7 @@ namespace doeBem.Infrastructure.Data
         }
 
         public DbSet<Donor> Donors { get; set; }
+        public DbSet<Hospital> Hospitals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

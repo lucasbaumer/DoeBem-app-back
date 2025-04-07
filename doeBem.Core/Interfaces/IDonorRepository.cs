@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace doeBem.Core
+namespace doeBem.Core.Interfaces
 {
     public interface IDonorRepository
     {
