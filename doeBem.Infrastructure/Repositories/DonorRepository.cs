@@ -7,7 +7,7 @@ namespace doeBem.Infrastructure.Repositories
 {
     public class DonorRepository : IDonorRepository
     {
-        public readonly MyDbContext _context;
+        private readonly MyDbContext _context;
         public DonorRepository(MyDbContext context) 
         {
             _context = context;

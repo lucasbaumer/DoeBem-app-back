@@ -12,7 +12,7 @@ namespace doeBem.Infrastructure.Repositories
 {
     public class HospitalRepository : IHospitalRepository
     {
-        public readonly MyDbContext _context;
+        private readonly MyDbContext _context;
 
         public HospitalRepository(MyDbContext context)
         {

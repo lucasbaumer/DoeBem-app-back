@@ -1,0 +1,80 @@
+﻿using doeBem.Application.DTOS;
+using doeBem.Application.Interfaces;
+using doeBem.Core.Entities;
+using doeBem.Core.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace doeBem.Application.Services
+{
+    public class DonationService : IDonationService
+    {
+        private readonly IDonationRepository _donationRepository;
+
+        public DonationService(IDonationRepository donationRepository)
+        {
+            _donationRepository = donationRepository;
+        }
+
+        public async Task<Guid> RegisterDonation(DonationDTO donationDto)
+        {
+            if (!DateTime.TryParse(donationDto.Date, out DateTime Date))
+            {
+                throw new Exception("Data de nascimento inválida");
+            }
+
+            var donation = new Donation
+            {
+                Id = Guid.NewGuid(),
+                Value = donationDto.Value,
+                Date = Date,
+                DonorId = donationDto.DonorId,
+                HospitalId = donationDto.HospitalId
+            };
+
+            await _donationRepository.AddAsync(donation);
+            return donation.Id;
+        }
+
+        public async Task<bool> DeleteDonation(Guid id)
+        {
+            await _donationRepository.DeleteAsync(id);
+            return true;
+        }
+
+        public Task<IEnumerable<Donation>> GetAllAsync()
+        {
+            return _donationRepository.GetAllAsync();
+        }
+
+        public Task<Donation> GetByIdAsync(Guid id)
+        {
+            return _donationRepository.GetByIdAsync(id);
+        }
+
+        public async Task<bool> UpdateDonation(Guid id, DonationDTO donationDto)
+        {
+            var donation = await _donationRepository.GetByIdAsync(id);
+            if(donation == null)
+            {
+                throw new Exception("Doação não encontrada!");
+            }
+
+            if (!DateTime.TryParse(donationDto.Date, out DateTime Date))
+            {
+                throw new Exception("Data de nascimento inválida");
+            }
+
+            donation.Value = donationDto.Value;
+            donation.Date = Date;
+            donation.DonorId = donationDto.DonorId;
+            donation.HospitalId = donation.HospitalId;
+
+            await _donationRepository.UpdateAsync(donation);
+            return true;
+        }
+    }
+}

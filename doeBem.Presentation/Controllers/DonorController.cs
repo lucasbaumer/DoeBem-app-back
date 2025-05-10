@@ -43,7 +43,7 @@ namespace doeBem.Presentation.Controllers
             var donor = await _donorService.GetByIdAsync(id);
             if (donor == null)
             {
-                return NotFound();
+                return NotFound("Nenhum doador foi encontrado");
             }
 
             return Ok(donor);

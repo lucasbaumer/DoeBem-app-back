@@ -28,5 +28,7 @@ namespace doeBem.Core.Entities
         public string Phone { get; set; }
 
         public string Description { get; set; }
+
+        public ICollection<Donation> ReceivedDonations { get; set; } = new List<Donation>();
     }
 }
