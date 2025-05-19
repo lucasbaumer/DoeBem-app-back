@@ -36,12 +36,12 @@ namespace doeBem.Presentation.Controllers
         }
 
         [HttpGet("id")]
-        public async Task<ActionResult<Hospital>> GetHospitalById(Guid id)
+        public async Task<ActionResult<HospitalWithDonationsDto>> GetHospitalById(Guid id)
         {
             var hospital = await _hospitalService.GetByIdAsync(id);
             if(hospital == null)
             {
-                return NotFound();
+                return NotFound("Nenhum hospital com o id foi encontrado");
             }
 
             return Ok(hospital);

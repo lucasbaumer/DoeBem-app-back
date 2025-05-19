@@ -50,9 +50,36 @@ namespace doeBem.Application.Services
             }).ToList();
         }
 
-        public async Task<Hospital> GetByIdAsync(Guid id)
+        public async Task<HospitalWithDonationsDto> GetByIdAsync(Guid id)
         {
-            return await _hospitalRepository.GetByIdAsync(id);
+            var hospital = await _hospitalRepository.GetByIdAsync(id);
+
+            if (hospital == null)
+            {
+                throw new Exception("Hospital com o id selecinado nao existe!");
+            }
+
+            return new HospitalWithDonationsDto
+            {
+                Id = hospital.Id,
+                Name = hospital.Name,
+                CNES = hospital.CNES,
+                State = hospital.State,
+                City = hospital.City,
+                Phone = hospital.Phone,
+                Description = hospital.Description,
+                ReceivedDonations = hospital.ReceivedDonations.Select(d => new DonationForHospitalDTO
+                {
+                    Id = d.Id,
+                    Value = d.Value,
+                    Date = d.Date,
+                    DonorId = d.DonorId,
+                    DonorName= d.Donor?.Name ?? "Doador Anônimo"
+
+                }).ToList()
+
+
+            };
         }
 
         public async Task<Guid> RegisterHospital(HospitalCreateDto registerHospitalDto)
