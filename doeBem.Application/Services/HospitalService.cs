@@ -26,9 +26,28 @@ namespace doeBem.Application.Services
             return true;
         }
 
-        public async Task<IEnumerable<Hospital>> GetAllAsync()
+        public async Task<IEnumerable<HospitalWithDonationsDto>> GetAllAsync()
         {
-            return await _hospitalRepository.GetAllAsync();
+            var hospitals = await _hospitalRepository.GetAllAsync();
+
+            return hospitals.Select(h => new HospitalWithDonationsDto
+            {
+                Id = h.Id,
+                Name = h.Name,
+                CNES = h.CNES,
+                State = h.State,
+                City = h.City,
+                Phone = h.Phone,
+                Description = h.Description,
+                ReceivedDonations = h.ReceivedDonations.Select(d => new DonationForHospitalDTO
+                {
+                    Id = d.Id,
+                    Value = d.Value,
+                    Date = d.Date,
+                    DonorId = d.Donor.Id,
+                    DonorName = d.Donor?.Name ?? "Doador Anônimo"
+                }).ToList()
+            }).ToList();
         }
 
         public async Task<Hospital> GetByIdAsync(Guid id)

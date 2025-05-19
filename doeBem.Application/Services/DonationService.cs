@@ -45,14 +45,40 @@ namespace doeBem.Application.Services
             return true;
         }
 
-        public Task<IEnumerable<Donation>> GetAllAsync()
+        public async Task<IEnumerable<DonationDTO>> GetAllAsync()
         {
-            return _donationRepository.GetAllAsync();
+            var donations = await _donationRepository.GetAllAsync();
+
+            return donations.Select(donation => new DonationDTO
+            {
+                Id = donation.Id,
+                Value = donation.Value,
+                Date = donation.Date.ToString("yyyy-MM-dd"),
+                DonorId = donation.DonorId,
+                DonorName = donation.Donor.Name,
+                HospitalId = donation.HospitalId,
+                HospitalName = donation.Hospital.Name
+            });
         }
 
-        public Task<Donation> GetByIdAsync(Guid id)
+        public async Task<DonationDTO> GetByIdAsync(Guid id)
         {
-            return _donationRepository.GetByIdAsync(id);
+            var donation = await _donationRepository.GetByIdAsync(id);
+            if (donation == null)
+            {
+                throw new Exception("Nenhuma doação encontrada!");
+            }
+
+            return new DonationDTO
+            {
+                Id = donation.Id,
+                Value = donation.Value,
+                Date = donation.Date.ToString("yyyy-MM-dd"),
+                DonorId = donation.DonorId,
+                DonorName = donation.Donor.Name,
+                HospitalId = donation.HospitalId,
+                HospitalName = donation.Hospital.Name
+            };
         }
 
         public async Task<bool> UpdateDonation(Guid id, DonationDTO donationDto)

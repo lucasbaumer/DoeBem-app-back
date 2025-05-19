@@ -10,7 +10,7 @@ namespace doeBem.Application.Interfaces
 {
     public interface IHospitalService
     {
-        Task<IEnumerable<Hospital>> GetAllAsync();
+        Task<IEnumerable<HospitalWithDonationsDto>> GetAllAsync();
         Task<Hospital> GetByIdAsync(Guid id);
         Task<Guid> RegisterHospital(HospitalCreateDto registerHospitalDto);
         Task<bool> UpdateHospital(Guid id, HospitalUpdateDto updateHospitalDto);

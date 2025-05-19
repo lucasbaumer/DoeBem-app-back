@@ -16,7 +16,7 @@ namespace doeBem.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Donation>> GetAllDonations()
+        public async Task<ActionResult<IEnumerable<DonationDTO>>> GetAllDonations()
         {
             var donations = await _donationService.GetAllAsync();
 
@@ -51,7 +51,9 @@ namespace doeBem.Presentation.Controllers
             try
             {
                 var donationId = await _donationService.RegisterDonation(donationDto);
-                return CreatedAtAction(nameof(GetDonationById), new { id = donationId }, donationDto);
+                var donationResponse = await _donationService.GetByIdAsync(donationId);
+
+                return CreatedAtAction(nameof(GetDonationById), new { id = donationId }, donationResponse);
             }
             catch (Exception e)
             {

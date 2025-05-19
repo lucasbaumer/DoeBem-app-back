@@ -37,17 +37,26 @@ namespace doeBem.Infrastructure.Repositories
 
         public async Task<IEnumerable<Hospital>> GetAllAsync()
         {
-            return await _context.Hospitals.ToListAsync();
+            return await _context.Hospitals
+                .Include(h => h.ReceivedDonations)
+                .ThenInclude(d => d.Donor)
+                .ToListAsync();
         }
 
         public async Task<Hospital> GetByCnesAsync(int cnes)
         {
-            return await _context.Hospitals.FirstOrDefaultAsync(c => c.CNES == cnes);
+            return await _context.Hospitals
+                .Include(h => h.ReceivedDonations)
+                .ThenInclude(d => d.Donor)
+                .FirstOrDefaultAsync(c => c.CNES == cnes);
         }
 
         public async Task<Hospital> GetByIdAsync(Guid id)
         {
-            return await _context.Hospitals.FindAsync(id);
+            return await _context.Hospitals
+                .Include(h => h.ReceivedDonations)
+                .ThenInclude(d => d.Donor)
+                .FirstOrDefaultAsync(h => h.Id == id);
         }
 
         public async Task UpdateAsync(Hospital hospital)
