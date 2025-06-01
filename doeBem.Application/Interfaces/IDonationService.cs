@@ -12,7 +12,7 @@ namespace doeBem.Application.Interfaces
     {
         Task<IEnumerable<DonationDTO>> GetAllAsync();
         Task<DonationDTO> GetByIdAsync(Guid id);
-        Task<Guid> RegisterDonation(DonationDTO donationDto);
+        Task<Guid> RegisterDonation(DonationCreateDTO donationCreateDto);
         Task<bool> UpdateDonation(Guid id, DonationDTO donationDto);
         Task<bool> DeleteDonation(Guid id);
 

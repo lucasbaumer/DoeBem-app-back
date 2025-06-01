@@ -19,9 +19,9 @@ namespace doeBem.Application.Services
             _donationRepository = donationRepository;
         }
 
-        public async Task<Guid> RegisterDonation(DonationDTO donationDto)
+        public async Task<Guid> RegisterDonation(DonationCreateDTO donationCreateDto)
         {
-            if (!DateTime.TryParse(donationDto.Date, out DateTime Date))
+            if (!DateTime.TryParse(donationCreateDto.Date, out DateTime Date))
             {
                 throw new Exception("Data de nascimento inválida");
             }
@@ -29,10 +29,10 @@ namespace doeBem.Application.Services
             var donation = new Donation
             {
                 Id = Guid.NewGuid(),
-                Value = donationDto.Value,
+                Value = donationCreateDto.Value,
                 Date = Date,
-                DonorId = donationDto.DonorId,
-                HospitalId = donationDto.HospitalId
+                DonorId = donationCreateDto.DonorId,
+                HospitalId = donationCreateDto.HospitalId
             };
 
             await _donationRepository.AddAsync(donation);

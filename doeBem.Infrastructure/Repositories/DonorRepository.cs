@@ -14,12 +14,18 @@ namespace doeBem.Infrastructure.Repositories
         }
        public async Task<Donor> GetByIdAsync(Guid id)
         {
-            return await _context.Donors.FindAsync(id);
+            return await _context.Donors
+                .Include(d => d.Donations)
+                .ThenInclude(h => h.Hospital)
+                .FirstOrDefaultAsync(d => d.Id == id);
         }
 
         public async Task<IEnumerable<Donor>> GetAllAsync()
         {
-            return await _context.Donors.ToListAsync();
+            return await _context.Donors
+                .Include(d => d.Donations)
+                .ThenInclude(h => h.Hospital)
+                .ToListAsync();
         }
 
         public async Task AddAsync(Donor donor)

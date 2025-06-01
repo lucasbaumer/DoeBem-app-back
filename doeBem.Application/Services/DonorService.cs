@@ -27,14 +27,53 @@ namespace doeBem.Application.Services
             return true;
         }
 
-        public async Task<IEnumerable<Donor>> GetAllAsync()
+        public async Task<IEnumerable<DonorWithDonationsDTO>> GetAllAsync()
         {
-            return await _donorRepository.GetAllAsync();
+            var donors = await _donorRepository.GetAllAsync();
+
+            return donors.Select(d => new DonorWithDonationsDTO
+            {
+                Id = d.Id,
+                Name = d.Name,
+                Cpf = d.Cpf,
+                Phone = d.Phone,
+                Email = d.Email,
+                Donations = d.Donations.Select(dn => new DonationForDonorDTO
+                {
+                    Id = dn.Id,
+                    Value = dn.Value,
+                    Date = dn.Date,
+                    HospitalId = dn.HospitalId,
+                    HospitalName = dn.Hospital?.Name
+                }).ToList()
+            });
         }
 
-        public async Task<Donor> GetByIdAsync(Guid id)
+        public async Task<DonorWithDonationsDTO> GetByIdAsync(Guid id)
         {
-            return await _donorRepository.GetByIdAsync(id);
+            var donor = await _donorRepository.GetByIdAsync(id);
+
+            if(donor == null)
+            {
+                return null;
+            }
+
+            return new DonorWithDonationsDTO
+            {
+                Id = donor.Id,
+                Name = donor.Name,
+                Cpf = donor.Cpf,
+                Phone = donor.Phone,
+                Email = donor.Email,
+                Donations = donor.Donations.Select(dn => new DonationForDonorDTO
+                {
+                    Id = dn.Id,
+                    Value = dn.Value,
+                    Date = dn.Date,
+                    HospitalId = dn.HospitalId,
+                    HospitalName = dn.Hospital?.Name
+                }).ToList()
+            }; 
         }
 
         public async Task<Guid> RegisterDonor(DonorCreateDTO registerDonorDto)

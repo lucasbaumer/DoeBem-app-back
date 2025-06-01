@@ -46,11 +46,11 @@ namespace doeBem.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterDonation(DonationDTO donationDto)
+        public async Task<IActionResult> RegisterDonation(DonationCreateDTO donationCreateDto)
         {
             try
             {
-                var donationId = await _donationService.RegisterDonation(donationDto);
+                var donationId = await _donationService.RegisterDonation(donationCreateDto);
                 var donationResponse = await _donationService.GetByIdAsync(donationId);
 
                 return CreatedAtAction(nameof(GetDonationById), new { id = donationId }, donationResponse);
