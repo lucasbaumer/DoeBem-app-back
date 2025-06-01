@@ -23,7 +23,7 @@ Clone o projeto:
 ```
 
 ## Configure o banco de dados local
-## No arquivo appsettings.json dentro da pasta doebem.presentation, altere a string de conexão para apontar para seu SQL server local
+No arquivo appsettings.json dentro da pasta doebem.presentation, altere a string de conexão para apontar para seu SQL server local
 
 ```bash
 "ConnectionStrings": {
@@ -39,9 +39,9 @@ Clone o projeto:
 ```
 
 ## Restaure os pacotes e atualize o banco 
-## O MyDbContext está localizado na pasta Infrastructure. Para aplicar as migrations e atualizar o banco rode os comandos abaixo na raiz do projeto (doebem.presentation)
+O MyDbContext está localizado na pasta Infrastructure. Para aplicar as migrations e atualizar o banco rode os comandos abaixo na raiz do projeto (doebem.presentation)
 
-# Criar migration (substitua "NomeDaMigration" por um nome que descreva as mudanças)
+Criar migration (substitua "NomeDaMigration" por um nome que descreva as mudanças)
 ```bash
 dotnet ef migrations add NomeDaMigration --project doeBem.Infrastructure --startup-project doeBem.Presentation
 ```
