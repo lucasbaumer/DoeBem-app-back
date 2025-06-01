@@ -16,12 +16,6 @@ Clone o projeto:
   git clone git@github.com:lucasbaumer/DoeBem-app-back.git
 ```
 
-## Entre no diretório do projeto
-
-```bash
-  cd doeBem.Presentation
-```
-
 ## Configure o banco de dados local
 No arquivo appsettings.json dentro da pasta doebem.presentation, altere a string de conexão para apontar para seu SQL server local
 
@@ -57,8 +51,15 @@ dotnet ef database update --project doeBem.Infrastructure --startup-project doeB
 dotnet tool install --global dotnet-ef
 ```
 
-## Inicie o servidor (dentro da solução doebem.presentation)
+# Iniciando o servidor
 
+## Entre no diretório do projeto
+
+```bash
+  cd doeBem.Presentation
+```
+
+## Execute o comando 
 ```bash
   dotnet run
 ```
