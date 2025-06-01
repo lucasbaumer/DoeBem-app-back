@@ -1,6 +1,7 @@
 ﻿using doeBem.Application.DTOS;
 using doeBem.Application.Interfaces;
 using doeBem.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace doeBem.Presentation.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class DonorController : ControllerBase
     {
         private readonly IDonorService _donorService;

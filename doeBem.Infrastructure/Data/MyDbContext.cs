@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using doeBem.Core.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 
 namespace doeBem.Infrastructure.Data
 {
-    public class MyDbContext : DbContext
+    public class MyDbContext : IdentityDbContext<IdentityUser>
     {
         public MyDbContext(DbContextOptions<MyDbContext> options) : base(options) 
         {

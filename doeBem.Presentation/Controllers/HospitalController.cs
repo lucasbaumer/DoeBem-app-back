@@ -1,6 +1,7 @@
 ﻿using doeBem.Application.DTOS;
 using doeBem.Application.Interfaces;
 using doeBem.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
 
@@ -8,6 +9,7 @@ namespace doeBem.Presentation.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class HospitalController : ControllerBase
     {
         private readonly IHospitalService _hospitalService;
