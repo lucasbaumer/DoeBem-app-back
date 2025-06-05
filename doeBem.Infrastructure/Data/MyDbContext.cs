@@ -25,14 +25,14 @@ namespace doeBem.Infrastructure.Data
                 .HasOne(d => d.Donor)
                 .WithMany(d => d.Donations)
                 .HasForeignKey(d => d.DonorId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Relacionamento Hospital - Donation (1:N)
             modelBuilder.Entity<Donation>()
                 .HasOne(d => d.Hospital)
                 .WithMany(h => h.ReceivedDonations)
                 .HasForeignKey(d => d.HospitalId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
         }
 
         public override int SaveChanges()

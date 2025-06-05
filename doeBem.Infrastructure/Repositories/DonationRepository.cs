@@ -1,4 +1,5 @@
-﻿using doeBem.Core.Entities;
+﻿using doeBem.Application.DTOS;
+using doeBem.Core.Entities;
 using doeBem.Core.Interfaces;
 using doeBem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,15 @@ namespace doeBem.Infrastructure.Repositories
             return await _context.Donations
                 .Include(d => d.Donor)
                 .Include(d => d.Hospital)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Donation>> GetByHospitalIdAsync(Guid hospitalId)
+        {
+            return await _context.Donations
+                .Include(d => d.Donor)
+                .Include(d => d.Hospital)
+                .Where(d => d.HospitalId == hospitalId)
                 .ToListAsync();
         }
 

@@ -10,21 +10,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar DbContext
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configurar Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<MyDbContext>()
     .AddDefaultTokenProviders();
 
-// Configurar JWT
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
@@ -51,9 +50,32 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<IdentityUser>>();
+            var userId = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                context.Fail("Token inválido: Usuário não identificado.");
+                return;
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                context.Fail("usuário excluido!");
+            }
+        }
+    };
 });
 
-// Registrar serviços e repositórios da aplicação
+
+
 builder.Services.AddScoped<IDonorService, DonorService>();
 builder.Services.AddScoped<IDonorRepository, DonorRepository>();
 builder.Services.AddScoped<IHospitalRepository, HospitalRepository>();
@@ -62,7 +84,6 @@ builder.Services.AddScoped<IDonationRepository, DonationRepository>();
 builder.Services.AddScoped<IDonationService, DonationService>();
 builder.Services.AddScoped<TokenService>();
 
-// Configurar controllers e JSON options
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -71,7 +92,6 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
-// Configurar Swagger com suporte a JWT
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -102,7 +122,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configurar pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

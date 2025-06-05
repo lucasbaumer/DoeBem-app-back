@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using doeBem.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using doeBem.Infrastructure.Data;
 namespace doeBem.Infrastructure.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250604203724_rmvPasswdDonor")]
+    partial class rmvPasswdDonor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,10 +232,10 @@ namespace doeBem.Infrastructure.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("DonorId")
+                    b.Property<Guid>("DonorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("HospitalId")
+                    b.Property<Guid>("HospitalId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<float>("Value")
@@ -367,12 +370,14 @@ namespace doeBem.Infrastructure.Migrations
                     b.HasOne("doeBem.Core.Entities.Donor", "Donor")
                         .WithMany("Donations")
                         .HasForeignKey("DonorId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("doeBem.Core.Entities.Hospital", "Hospital")
                         .WithMany("ReceivedDonations")
                         .HasForeignKey("HospitalId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Donor");
 

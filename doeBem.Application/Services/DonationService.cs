@@ -54,10 +54,10 @@ namespace doeBem.Application.Services
                 Id = donation.Id,
                 Value = donation.Value,
                 Date = donation.Date.ToString("yyyy-MM-dd"),
-                DonorId = donation.DonorId,
-                DonorName = donation.Donor.Name,
-                HospitalId = donation.HospitalId,
-                HospitalName = donation.Hospital.Name
+                DonorId = donation.DonorId ?? Guid.Empty,
+                DonorName = donation.Donor?.Name ?? "Doador Anônimo",
+                HospitalId = donation.HospitalId ?? Guid.Empty,
+                HospitalName = donation.Hospital?.Name ?? "Hospital Anônimo"
             });
         }
 
@@ -74,10 +74,10 @@ namespace doeBem.Application.Services
                 Id = donation.Id,
                 Value = donation.Value,
                 Date = donation.Date.ToString("yyyy-MM-dd"),
-                DonorId = donation.DonorId,
-                DonorName = donation.Donor.Name,
-                HospitalId = donation.HospitalId,
-                HospitalName = donation.Hospital.Name
+                DonorId = donation.DonorId ?? Guid.Empty,
+                DonorName = donation.Donor?.Name ?? "Doador Anônimo",
+                HospitalId = donation.HospitalId ?? Guid.Empty,
+                HospitalName = donation.Hospital?.Name ?? "Hospital Anônimo"
             };
         }
 

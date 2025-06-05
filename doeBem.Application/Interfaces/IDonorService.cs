@@ -15,6 +15,5 @@ namespace doeBem.Application.Interfaces
         Task<Guid> RegisterDonor(DonorCreateDTO CreateDonorDto);
         Task<bool> UpdateDonor(Guid id, DonorUpdateDTO updateDonorDto);
         Task<bool> DeleteDonor(Guid id);
-        Task<bool> LoginAsync(string email, string passoword);
     }
 }

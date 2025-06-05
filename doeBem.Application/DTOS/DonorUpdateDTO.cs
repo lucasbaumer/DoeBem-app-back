@@ -23,6 +23,6 @@ namespace doeBem.Application.DTOS
         public string Cpf { get; set; }
 
         [Required]
-        public DateTime DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
     }
 }

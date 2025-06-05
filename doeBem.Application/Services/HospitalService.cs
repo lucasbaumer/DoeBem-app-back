@@ -14,15 +14,30 @@ namespace doeBem.Application.Services
     public class HospitalService : IHospitalService
     {
         private readonly IHospitalRepository _hospitalRepository;
+        private readonly IDonationRepository _donationRepository;
 
-        public HospitalService(IHospitalRepository hospitalRepository)
+        public HospitalService(IHospitalRepository hospitalRepository, IDonationRepository donationRepository)
         {
             _hospitalRepository = hospitalRepository;
+            _donationRepository = donationRepository;
         }
 
         public async Task<bool> DeleteHospital(Guid id)
         {
-            await _hospitalRepository.DeleteAsync(id);
+            var hospital = await _hospitalRepository.GetByIdAsync(id);
+            if(hospital == null)
+            {
+                throw new Exception("Hospital não foi encontrado!");
+            }
+
+            var donations = await _donationRepository.GetByHospitalIdAsync(hospital.Id);
+            foreach(var donation in donations)
+            {
+                donation.HospitalId = null;
+                await _donationRepository.UpdateAsync(donation);
+            }
+
+            await _hospitalRepository.DeleteAsync(hospital.Id);
             return true;
         }
 
@@ -44,7 +59,7 @@ namespace doeBem.Application.Services
                     Id = d.Id,
                     Value = d.Value,
                     Date = d.Date,
-                    DonorId = d.Donor.Id,
+                    DonorId = d.DonorId ?? Guid.Empty,
                     DonorName = d.Donor?.Name ?? "Doador Anônimo"
                 }).ToList()
             }).ToList();
@@ -73,7 +88,7 @@ namespace doeBem.Application.Services
                     Id = d.Id,
                     Value = d.Value,
                     Date = d.Date,
-                    DonorId = d.DonorId,
+                    DonorId = d.DonorId ?? Guid.Empty,
                     DonorName= d.Donor?.Name ?? "Doador Anônimo"
 
                 }).ToList()

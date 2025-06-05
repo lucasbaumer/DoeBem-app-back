@@ -90,19 +90,5 @@ namespace doeBem.Presentation.Controllers
             }
             return BadRequest("Erro ao remover doador!");
         }
-
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDTO loginDto)
-        {
-            bool isValid = await _donorService.LoginAsync(loginDto.Email, loginDto.Password);
-
-            if (isValid)
-            {
-                return Ok("Login bem sucedido!");
-            }
-
-            return Unauthorized("Email ou senha inválidos!");
-        }
     }
 }

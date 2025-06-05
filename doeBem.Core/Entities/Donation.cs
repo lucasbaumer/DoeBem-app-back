@@ -12,10 +12,10 @@ namespace doeBem.Core.Entities
         public float Value { get; set; }
         public DateTime Date { get; set; }
 
-        public Guid DonorId { get; set; }
+        public Guid? DonorId { get; set; }
         public Donor Donor { get; set; }
 
-        public Guid HospitalId { get; set; }
+        public Guid? HospitalId { get; set; }
         public Hospital Hospital { get; set; }
 
     }

@@ -14,7 +14,7 @@ namespace doeBem.Application.DTOS
         public string Email { get; set; }
         public string Cpf { get; set; }
         public string Phone { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
         public List<DonationForDonorDTO> Donations { get; set; } = new();
     }
 }

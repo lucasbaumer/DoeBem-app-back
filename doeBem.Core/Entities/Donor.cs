@@ -27,9 +27,6 @@ namespace doeBem.Core.Entities
         [Required]
         public DateTime DateOfBirth { get; set; }
 
-        [Required]
-        public string PasswordCript { get; set; }
-
         public ICollection<Donation> Donations { get; set; } = new List<Donation>();
     }
 }

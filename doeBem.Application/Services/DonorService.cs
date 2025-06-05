@@ -2,29 +2,42 @@
 using doeBem.Application.Interfaces;
 using doeBem.Core.Entities;
 using doeBem.Core.Interfaces;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace doeBem.Application.Services
 {
     public class DonorService : IDonorService
     {
         private readonly IDonorRepository _donorRepository;
-        private readonly EncryptService _encryptService;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public DonorService(IDonorRepository donorRepository)
+        public DonorService(IDonorRepository donorRepository, UserManager<IdentityUser> userManager)
         {
             _donorRepository = donorRepository;
-            _encryptService = new EncryptService("chaveSecreta");
+            _userManager = userManager;
         }
 
         public async Task<bool> DeleteDonor(Guid id)
         {
+            var donor = await _donorRepository.GetByIdAsync(id);
+            if(donor == null)
+            {
+                throw new Exception("Doador não foi encontrado");
+            }
+
+            var user = await _userManager.FindByEmailAsync(donor.Email);
+            if(user != null)
+            {
+                var identityResult = await _userManager.DeleteAsync(user);
+                if (!identityResult.Succeeded)
+                {
+                    var erros = string.Join(", ", identityResult.Errors.Select(e => e.Description));
+                    throw new Exception($"Erro ao deletar usuário: ${erros}");
+                }
+            }
+
             await _donorRepository.DeleteAsync(id);
-            return true;
+            return true; 
         }
 
         public async Task<IEnumerable<DonorWithDonationsDTO>> GetAllAsync()
@@ -38,12 +51,13 @@ namespace doeBem.Application.Services
                 Cpf = d.Cpf,
                 Phone = d.Phone,
                 Email = d.Email,
+                DateOfBirth = d.DateOfBirth.ToString("yyyy-MM-dd"),
                 Donations = d.Donations.Select(dn => new DonationForDonorDTO
                 {
                     Id = dn.Id,
                     Value = dn.Value,
                     Date = dn.Date,
-                    HospitalId = dn.HospitalId,
+                    HospitalId = dn.HospitalId ?? Guid.Empty,
                     HospitalName = dn.Hospital?.Name
                 }).ToList()
             });
@@ -65,12 +79,13 @@ namespace doeBem.Application.Services
                 Cpf = donor.Cpf,
                 Phone = donor.Phone,
                 Email = donor.Email,
+                DateOfBirth = donor.DateOfBirth.ToString("yyyy-MM-dd"),
                 Donations = donor.Donations.Select(dn => new DonationForDonorDTO
                 {
                     Id = dn.Id,
                     Value = dn.Value,
                     Date = dn.Date,
-                    HospitalId = dn.HospitalId,
+                    HospitalId = dn.HospitalId ?? Guid.Empty,
                     HospitalName = dn.Hospital?.Name
                 }).ToList()
             }; 
@@ -78,12 +93,12 @@ namespace doeBem.Application.Services
 
         public async Task<Guid> RegisterDonor(DonorCreateDTO registerDonorDto)
         {
-            if (!DateTime.TryParse(registerDonorDto.DateOfBirth, out DateTime dateOfBirth))
+            if (!DateTime.TryParseExact(registerDonorDto.DateOfBirth, "yyyy-MM-dd",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out DateTime dateOfBirth))
             {
-                throw new Exception("Data de nascimento inválida");
+                throw new Exception("Data de nascimento inválidam formato esperado yyyy-MM-dd");
             }
-
-            string encryptedPassoword = _encryptService.Encrypt(registerDonorDto.Password);
 
             var donor = new Donor
             {
@@ -92,8 +107,7 @@ namespace doeBem.Application.Services
                 Email = registerDonorDto.Email,
                 Cpf = registerDonorDto.Cpf,
                 Phone = registerDonorDto.Phone,
-                DateOfBirth = dateOfBirth,
-                PasswordCript = encryptedPassoword
+                DateOfBirth = dateOfBirth
             };
 
             await _donorRepository.AddAsync(donor);
@@ -102,6 +116,13 @@ namespace doeBem.Application.Services
 
         public async Task<bool> UpdateDonor(Guid id, DonorUpdateDTO updateDto)
         {
+            if (!DateTime.TryParseExact(updateDto.DateOfBirth, "yyyy-MM-dd",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out DateTime dateOfBirth))
+            {
+                throw new Exception("Data de nascimento inválida, formato esperado yyyy-MM-dd");
+            }
+
             var donor = await _donorRepository.GetByIdAsync(id);
             if (donor == null)
             {
@@ -112,35 +133,10 @@ namespace doeBem.Application.Services
             donor.Email = updateDto.Email;
             donor.Phone = updateDto.Phone;
             donor.Cpf = updateDto.Cpf;
-            donor.DateOfBirth = updateDto.DateOfBirth;
+            donor.DateOfBirth = dateOfBirth;
 
             await _donorRepository.UpdateAsync(donor);
             return true;
-        }
-
-        public async Task<bool> LoginAsync(string email, string password)
-        {
-            var donor = await _donorRepository.GetByEmailAsync(email);
-            if(donor == null)
-            {
-                return false;
-            }
-
-            string decryptedPassword = _encryptService.Decrypt(donor.PasswordCript);
-            return decryptedPassword == password;
-        }
-
-        public async Task<bool> ValidatePassword(Guid id, string password)
-        {
-            var donor = await _donorRepository.GetByIdAsync(id);
-            if(donor == null)
-            {
-                return false;
-            }
-
-            string decryptedPassword = _encryptService.Decrypt(donor.PasswordCript);
-
-            return decryptedPassword == password;
         }
     }
 }

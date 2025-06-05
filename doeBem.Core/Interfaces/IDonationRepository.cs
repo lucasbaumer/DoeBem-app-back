@@ -14,5 +14,6 @@ namespace doeBem.Core.Interfaces
         Task AddAsync(Donation donation);
         Task UpdateAsync(Donation donation);
         Task DeleteAsync(Guid id);
+        Task<IEnumerable<Donation>> GetByHospitalIdAsync(Guid hospitalId);
     }
 }

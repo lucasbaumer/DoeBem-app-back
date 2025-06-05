@@ -1,5 +1,7 @@
 ﻿using BackendProjeto.Application.Services;
 using doeBem.Application.DTOS;
+using doeBem.Application.Interfaces;
+using doeBem.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +16,14 @@ namespace BackendProjeto.Presentation.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _login;
         private readonly TokenService _tokenService;
+        private readonly IDonorService _donorService;
 
-        public LoginController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> login, TokenService tokenService)
+        public LoginController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> login, TokenService tokenService, IDonorService donorService)
         {
             _userManager = userManager;
             _login = login;
             _tokenService = tokenService;
+            _donorService = donorService;
         }
 
         [HttpPost("login")]
@@ -39,9 +43,9 @@ namespace BackendProjeto.Presentation.Controllers
 
 
         [HttpPost("cadastrar")]
-        public async Task<ActionResult> CadastrarUsuario(LoginDTO loginDto)
+        public async Task<ActionResult> CadastrarUsuario(DonorCreateDTO donorCreateDto)
         {
-            var usuarioExistente = await _userManager.FindByEmailAsync(loginDto.Email);
+            var usuarioExistente = await _userManager.FindByEmailAsync(donorCreateDto.Email);
 
             if (usuarioExistente != null)
             {
@@ -50,19 +54,36 @@ namespace BackendProjeto.Presentation.Controllers
 
             var usuario = new IdentityUser
             {
-                UserName = loginDto.Email,
-                Email = loginDto.Email
+                UserName = donorCreateDto.Email,
+                Email = donorCreateDto.Email,
+                PhoneNumber = donorCreateDto.Phone
             };
 
-            var result = await _userManager.CreateAsync(usuario, loginDto.Password);
+            var result = await _userManager.CreateAsync(usuario, donorCreateDto.Password);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return Ok("Usuario Cadastrado");
+                return BadRequest(result.Errors);
             }
 
-            return BadRequest(result.Errors);
-        }
+            try
+            {
+                await _donorService.RegisterDonor(new DonorCreateDTO
+                {
+                    Name = donorCreateDto.Name,
+                    Email = donorCreateDto.Email,
+                    Phone = donorCreateDto.Phone,
+                    Cpf = donorCreateDto.Cpf,
+                    DateOfBirth = donorCreateDto.DateOfBirth
+                }); 
+            }
+            catch(Exception err)
+            {
+                await _userManager.DeleteAsync(usuario);
+                return BadRequest("Erro ao cadastrar doador!!" + err.Message);
+            }
 
+            return Ok("Doador cadastrado com sucesso!");
+        }
     }
 }
