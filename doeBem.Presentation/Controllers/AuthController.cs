@@ -2,6 +2,7 @@
 using doeBem.Application.DTOS;
 using doeBem.Application.Interfaces;
 using doeBem.Application.Services;
+using doeBem.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ namespace BackendProjeto.Presentation.Controllers
             _donorService = donorService;
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<ActionResult> LogarUsuario(LoginDTO loginDto)
         {
             var usuario = await _userManager.FindByEmailAsync(loginDto.Email);
@@ -42,48 +43,18 @@ namespace BackendProjeto.Presentation.Controllers
         }
 
 
-        [HttpPost("cadastrar")]
+        [HttpPost("Register/Donor")]
         public async Task<ActionResult> CadastrarUsuario(DonorCreateDTO donorCreateDto)
         {
-            var usuarioExistente = await _userManager.FindByEmailAsync(donorCreateDto.Email);
-
-            if (usuarioExistente != null)
-            {
-                throw new Exception("Email já cadastrado");
-            }
-
-            var usuario = new IdentityUser
-            {
-                UserName = donorCreateDto.Email,
-                Email = donorCreateDto.Email,
-                PhoneNumber = donorCreateDto.Phone
-            };
-
-            var result = await _userManager.CreateAsync(usuario, donorCreateDto.Password);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
-
             try
             {
-                await _donorService.RegisterDonor(new DonorCreateDTO
-                {
-                    Name = donorCreateDto.Name,
-                    Email = donorCreateDto.Email,
-                    Phone = donorCreateDto.Phone,
-                    Cpf = donorCreateDto.Cpf,
-                    DateOfBirth = donorCreateDto.DateOfBirth
-                }); 
+                await _donorService.RegisterDonor(donorCreateDto);
+                return Ok("Doador cadastrado com sucesso!");
             }
-            catch(Exception err)
+            catch(Exception ex)
             {
-                await _userManager.DeleteAsync(usuario);
-                return BadRequest("Erro ao cadastrar doador!!" + err.Message);
+                return BadRequest(ex.Message);
             }
-
-            return Ok("Doador cadastrado com sucesso!");
         }
     }
 }

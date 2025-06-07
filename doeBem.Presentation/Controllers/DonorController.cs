@@ -51,20 +51,6 @@ namespace doeBem.Presentation.Controllers
             return Ok(donor);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> RegisterDonor(DonorCreateDTO donorCreateDto)
-        {
-            try
-            {
-                var donorId = await _donorService.RegisterDonor(donorCreateDto);
-                return CreatedAtAction(nameof(GetDonorById), new { id = donorId }, donorCreateDto);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Erro ao cadastrar doador: {ex.Message}");
-            }
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDonor(Guid id, DonorUpdateDTO DonorUpdateDto)
         {

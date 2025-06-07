@@ -104,6 +104,13 @@ namespace doeBem.Application.Services
                 throw new Exception("CNES está inválido. Deve conter exatamente 7 dígitos");
             }
 
+            var cnesExitente = await _hospitalRepository.GetByCnesAsync(registerHospitalDto.CNES);
+            if(cnesExitente != null)
+            {
+                throw new Exception("CNES já cadastrado!");
+            }
+
+
             var hospital = new Hospital
             {
                 Id = Guid.NewGuid(),

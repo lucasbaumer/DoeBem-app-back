@@ -91,27 +91,63 @@ namespace doeBem.Application.Services
             }; 
         }
 
-        public async Task<Guid> RegisterDonor(DonorCreateDTO registerDonorDto)
+        public async Task<Guid> RegisterDonor(DonorCreateDTO donorCreateDto)
         {
-            if (!DateTime.TryParseExact(registerDonorDto.DateOfBirth, "yyyy-MM-dd",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None, out DateTime dateOfBirth))
+            var usuarioExistente = await _userManager.FindByEmailAsync(donorCreateDto.Email);
+
+            if (usuarioExistente != null)
             {
-                throw new Exception("Data de nascimento inválidam formato esperado yyyy-MM-dd");
+                throw new Exception("Email já cadastrado");
             }
 
-            var donor = new Donor
+            var Cpfexistente = await _donorRepository.GetByCpfAsync(donorCreateDto.Cpf);
+            if (Cpfexistente != null)
             {
-                Id = Guid.NewGuid(),
-                Name = registerDonorDto.Name,
-                Email = registerDonorDto.Email,
-                Cpf = registerDonorDto.Cpf,
-                Phone = registerDonorDto.Phone,
-                DateOfBirth = dateOfBirth
+                throw new Exception("Cpf já cadastrado!");
+            }
+
+            var usuario = new IdentityUser
+            {
+                UserName = donorCreateDto.Email,
+                Email = donorCreateDto.Email,
+                PhoneNumber = donorCreateDto.Phone
             };
 
-            await _donorRepository.AddAsync(donor);
-            return donor.Id;
+            var result = await _userManager.CreateAsync(usuario, donorCreateDto.Password);
+
+            if (!result.Succeeded)
+            {
+                var erros = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new Exception($"Erro ao criar usuário: {erros}");
+            }
+
+            try
+            {
+                if (!DateTime.TryParseExact(donorCreateDto.DateOfBirth, "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None, out DateTime dateOfBirth))
+                {
+                    throw new Exception("Data de nascimento inválida, formato esperado yyyy-MM-dd");
+                }
+
+                var donor = new Donor
+                {
+                    Id = Guid.NewGuid(),
+                    Name = donorCreateDto.Name,
+                    Email = donorCreateDto.Email,
+                    Phone = donorCreateDto.Phone,
+                    Cpf = donorCreateDto.Cpf,
+                    DateOfBirth = dateOfBirth
+                };
+
+                await _donorRepository.AddAsync(donor);
+                return donor.Id;
+            }
+            catch (Exception err)
+            {
+                await _userManager.DeleteAsync(usuario);
+                throw new Exception("Erro ao cadastrar doador!!" + err.Message);
+            }
         }
 
         public async Task<bool> UpdateDonor(Guid id, DonorUpdateDTO updateDto)

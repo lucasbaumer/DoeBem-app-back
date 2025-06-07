@@ -8,11 +8,11 @@ namespace doeBem.Infrastructure.Repositories
     public class DonorRepository : IDonorRepository
     {
         private readonly MyDbContext _context;
-        public DonorRepository(MyDbContext context) 
+        public DonorRepository(MyDbContext context)
         {
             _context = context;
         }
-       public async Task<Donor> GetByIdAsync(Guid id)
+        public async Task<Donor> GetByIdAsync(Guid id)
         {
             return await _context.Donors
                 .Include(d => d.Donations)
@@ -43,7 +43,7 @@ namespace doeBem.Infrastructure.Repositories
         public async Task DeleteAsync(Guid id)
         {
             var Donor = await _context.Donors.FindAsync(id);
-            if(Donor != null)
+            if (Donor != null)
             {
                 _context.Donors.Remove(Donor);
                 await _context.SaveChangesAsync();
@@ -52,7 +52,12 @@ namespace doeBem.Infrastructure.Repositories
 
         public async Task<Donor> GetByEmailAsync(string email)
         {
-            return await _context.Donors.FirstOrDefaultAsync(e => e.Email == email); 
+            return await _context.Donors.FirstOrDefaultAsync(e => e.Email == email);
+        }
+
+        public async Task<Donor?> GetByCpfAsync (string cpf)
+        {
+            return await _context.Donors.FirstOrDefaultAsync(c => c.Cpf == cpf);
         }
     }
 }

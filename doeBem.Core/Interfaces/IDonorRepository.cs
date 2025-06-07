@@ -14,6 +14,7 @@ namespace doeBem.Core.Interfaces
         Task UpdateAsync(Donor donor);
         Task<Donor> GetByIdAsync(Guid id);
         Task<Donor> GetByEmailAsync(string email);
+        Task<Donor?> GetByCpfAsync(string cpf);
         Task<IEnumerable<Donor>> GetAllAsync();
     }
 }

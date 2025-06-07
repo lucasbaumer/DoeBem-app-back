@@ -81,7 +81,7 @@ namespace doeBem.Application.Services
             };
         }
 
-        public async Task<bool> UpdateDonation(Guid id, DonationDTO donationDto)
+        public async Task<bool> UpdateDonation(Guid id, DonationUpdateDTO donationUpdateDto)
         {
             var donation = await _donationRepository.GetByIdAsync(id);
             if(donation == null)
@@ -89,14 +89,14 @@ namespace doeBem.Application.Services
                 throw new Exception("Doação não encontrada!");
             }
 
-            if (!DateTime.TryParse(donationDto.Date, out DateTime Date))
+            if (!DateTime.TryParse(donationUpdateDto.Date, out DateTime Date))
             {
                 throw new Exception("Data de nascimento inválida");
             }
 
-            donation.Value = donationDto.Value;
+            donation.Value = donationUpdateDto.Value;
             donation.Date = Date;
-            donation.DonorId = donationDto.DonorId;
+            donation.DonorId = donationUpdateDto.DonorId;
             donation.HospitalId = donation.HospitalId;
 
             await _donationRepository.UpdateAsync(donation);

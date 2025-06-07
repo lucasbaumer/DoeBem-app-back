@@ -64,11 +64,11 @@ namespace doeBem.Presentation.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDonation(Guid id, DonationDTO donationDto)
+        public async Task<IActionResult> UpdateDonation(Guid id, DonationUpdateDTO donationUpdateDto)
         {
             try
             {
-                var result = await _donationService.UpdateDonation(id, donationDto);
+                var result = await _donationService.UpdateDonation(id, donationUpdateDto);
                 return result ? Ok("Doação atualizada com sucesso!") : BadRequest("Erro ao atualizar doação!");
             }
             catch (Exception e)
