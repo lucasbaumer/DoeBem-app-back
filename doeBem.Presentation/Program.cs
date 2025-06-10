@@ -93,8 +93,13 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddEndpointsApiExplorer();
+
+var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
 builder.Services.AddSwaggerGen(c =>
 {
+    
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header usando o esquema Bearer. \r\n\r\nDigite 'Bearer' [espaço] e depois seu token.\r\n\r\nExemplo: \"Bearer 12345abcdef\"",
@@ -118,9 +123,26 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
+
+    c.IncludeXmlComments(xmlPath);
 });
 
 var app = builder.Build();
+
+app.UseExceptionHandler(appError =>
+{
+    appError.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+
+        await context.Response.WriteAsJsonAsync(new
+        {
+            StatusCode = 500,
+            Message = "Ocorreu um erro inesperado no servidor, Por favor, tente novamente mais tarde!"
+        });
+    });
+});
 
 if (app.Environment.IsDevelopment())
 {
@@ -136,3 +158,22 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+await CreateRoles(app.Services);
+
+async Task CreateRoles(IServiceProvider serviceProvider)
+{
+    using var scope = serviceProvider.CreateScope();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    string[] roles = { "Admin", "Donor" };
+    
+    foreach(var role in roles)
+    {
+        if(!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
+

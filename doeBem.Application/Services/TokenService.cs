@@ -20,11 +20,18 @@ namespace BackendProjeto.Application.Services
 
         public async Task<String> GenerateToken(IdentityUser user)
         {
-            var claims = new[]
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var AuthClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            foreach(var role in userRoles)
+            {
+                AuthClaims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credencial = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
@@ -32,7 +39,7 @@ namespace BackendProjeto.Application.Services
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                claims: claims,
+                claims: AuthClaims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: credencial
             );

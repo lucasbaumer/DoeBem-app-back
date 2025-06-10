@@ -114,6 +114,7 @@ namespace doeBem.Application.Services
             };
 
             var result = await _userManager.CreateAsync(usuario, donorCreateDto.Password);
+            await _userManager.AddToRoleAsync(usuario, "donor");
 
             if (!result.Succeeded)
             {

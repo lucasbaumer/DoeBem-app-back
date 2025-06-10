@@ -17,6 +17,41 @@ namespace doeBem.Presentation.Controllers
             _donationService = donationService;
         }
 
+        /// <summary>
+        /// Realiza o retorno de todas as doações registradas no sistema
+        /// </summary>
+        /// <returns>Retorna todas as doações</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        /// 
+        ///     GET api/Donation
+        ///     
+        /// Exemplo de resposta: 
+        /// 
+        ///     [
+        ///         {
+        ///             "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "valor": 1000.00,
+        ///             "data": "2025-04-20",
+        ///             "idDoador": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "nomeDoador": "Carlos",
+        ///             "idHospital": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "nomeHospital": "Hospital Pequeno Príncipe"
+        ///         },
+        ///         {
+        ///             "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "valor": 1240.00,
+        ///             "data": "2025-04-20",
+        ///             "idDoador": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "nomeDoador": "Pedro",
+        ///             "idHospital": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "nomeHospital": "Hospital IPO"
+        ///         }
+        ///     ]
+        /// </remarks>
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DonationDTO>>> GetAllDonations()
         {
@@ -35,6 +70,30 @@ namespace doeBem.Presentation.Controllers
             return Ok(donations);
         }
 
+        /// <summary>
+        /// Realiza o retorno da doação com o id passado 
+        /// </summary>
+        /// <param name="id">ID da doação que será retornada</param>
+        /// <returns>Retorna uma doação pelo id informado</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        /// 
+        ///     GET api/Donation/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        ///     
+        /// Exemplo de resposta:
+        ///
+        ///     {
+        ///         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///         "valor": 1000.00,
+        ///         "data": "2025-04-20",
+        ///         "idDoador": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///         "nomeDoador": "Carlos",
+        ///         "idHospital": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///         "nomeHospital": "Hospital Pequeno Príncipe"
+        ///     }
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
         public async Task<ActionResult<Donation>> GetDonationById(Guid id)
         {
@@ -47,6 +106,28 @@ namespace doeBem.Presentation.Controllers
             return Ok(donation);
         }
 
+        /// <summary>
+        /// Realiza o cadastro de uma doação no sistema
+        /// </summary>
+        /// <param name="donationCreateDto">Objeto contendo os dados da doação</param>
+        /// <returns>Cadastra uma doação no sistema</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        /// 
+        ///     POST api/Donation
+        ///     
+        /// Exemplo de corpo da requisição:
+        /// 
+        ///     {
+        ///         "valor": 1000.00,
+        ///         "data": "2025-04-20",
+        ///         "idDoador": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///         "idHospital": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        ///     }
+        ///     
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         public async Task<IActionResult> RegisterDonation(DonationCreateDTO donationCreateDto)
         {
@@ -63,6 +144,28 @@ namespace doeBem.Presentation.Controllers
             }
         }
 
+        /// <summary>
+        /// Realiza a edição de uma doação no sistema
+        /// </summary>
+        /// <param name="id">id da doação que pretende editar</param>
+        /// <param name="donationUpdateDto">Objeto contendo os dados do doador</param>
+        /// <returns>edita uma doação pelo id que foi informado</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        /// 
+        ///     PUT api/Donation/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        ///     
+        /// Exemplo de resposta: 
+        /// 
+        ///     {
+        ///        "Valor": "1000.00",
+        ///        "Data": "2025-04-20" (ano-mês-dia),
+        ///        "ID do Doador": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///        "ID do Hospital": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        ///     }
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDonation(Guid id, DonationUpdateDTO donationUpdateDto)
         {
@@ -77,6 +180,19 @@ namespace doeBem.Presentation.Controllers
             }
         }
 
+        /// <summary>
+        /// Realiza e exclusão de uma doação do sistema
+        /// </summary>
+        /// <param name="id">ID da doação que será excluída</param>
+        /// <returns>exclui uma doação correspondente ao id que foi informado</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        /// 
+        ///     DELETE api/Donation/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        ///     
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDonation(Guid id)
         {

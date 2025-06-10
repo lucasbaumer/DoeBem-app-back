@@ -33,6 +33,20 @@ namespace doeBem.Infrastructure.Data
                 .WithMany(h => h.ReceivedDonations)
                 .HasForeignKey(d => d.HospitalId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Donor>()
+                .HasIndex(d => d.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<Donor>()
+                .HasIndex(c => c.Cpf)
+                .IsUnique();
+
+            modelBuilder.Entity<Hospital>()
+                .HasIndex(h => h.Name);
+
+            modelBuilder.Entity<Donation>()
+                .HasIndex(d => d.Date);
         }
 
         public override int SaveChanges()
