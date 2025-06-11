@@ -23,7 +23,7 @@ namespace doeBem.Application.Services
         {
             if (!DateTime.TryParse(donationCreateDto.Date, out DateTime Date))
             {
-                throw new Exception("Data de nascimento inválida");
+                throw new Exception("Data da doação inválida");
             }
 
             var donation = new Donation
