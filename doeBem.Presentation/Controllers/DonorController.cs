@@ -22,13 +22,13 @@ namespace doeBem.Presentation.Controllers
         }
 
         /// <summary>
-        /// Realiza o retorno de todas os doadores registrados no sistema
+        /// Realiza o retorno de todas os doadores registrados no sistema com suas doações
         /// </summary>
         /// <returns>Retorna todos os doadores e suas doações</returns>
         /// <remarks>
         /// Exemplo de request: 
         /// 
-        ///         GET api/Donor
+        ///         GET api/Donor/WithDonations
         ///         
         /// Exemplo de resposta:
         ///     
@@ -75,12 +75,62 @@ namespace doeBem.Presentation.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("WithDonations")]
+        public async Task<ActionResult<IEnumerable<Donor>>> GetAllDonorsWithDonations()
+        {
+            var donors = await _donorService.GetAllWithDonationAsync();
+
+            if(donors == null)
+            {
+                return NotFound("Nenhum Doador encontrado");
+            }
+
+            if (!donors.Any())
+            {
+                return NotFound("A lista de doadores está vazia");
+            }
+
+            return Ok(donors);
+        }
+
+        /// <summary>
+        /// Realiza o retorno de todas os doadores registrados no sistema
+        /// </summary>
+        /// <returns>Retorna todos os doadores</returns>
+        /// <remarks>
+        /// Exemplo de request: 
+        /// 
+        ///         GET api/Donor
+        ///         
+        /// Exemplo de resposta:
+        ///     
+        ///     [
+        ///         {
+        ///             "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "nome": "Carlos",
+        ///             "email": "Carlos123@gmail.com",
+        ///             "cpf": "999.999.999-99",
+        ///             "phone": "(41)99999-9999",
+        ///             "dataNascimento": "1980-04-20"
+        ///         },
+        ///         {
+        ///             "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "nome": "Pedro",
+        ///             "email": "Pedro123@gmail.com",
+        ///             "cpf": "999.999.999-99",
+        ///             "phone": "(41)99999-9999",
+        ///             "dataNascimento": "1980-04-20"
+        ///         }
+        ///     ]
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Donor>>> GetAllDonors()
         {
-            var donors = await _donorService.GetAllAsync();
+            var donors = await _donorService.GetAllDonorsAsync();
 
-            if(donors == null)
+            if (donors == null)
             {
                 return NotFound("Nenhum Doador encontrado");
             }
@@ -127,10 +177,45 @@ namespace doeBem.Presentation.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("/WithDonations/{id}")]
+        public async Task<ActionResult<Donor>> GetDonorWitDonationsById(Guid id)
+        {
+            var donor = await _donorService.GetByIdWithDonationAsync(id);
+            if (donor == null)
+            {
+                return NotFound("Nenhum doador foi encontrado");
+            }
+
+            return Ok(donor);
+        }
+
+        /// <summary>
+        /// Realiza o retorno de um doador com o id passado
+        /// </summary>
+        /// <param name="id">ID do doador que será retornada</param>
+        /// <returns>Retorna o doador pelo id que foi informado</returns>
+        /// <remarks>
+        /// Exemplo de request: 
+        /// 
+        ///     GET api/Donor/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        ///     
+        /// Exemplo de resposta:
+        /// 
+        ///         {
+        ///             "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "nome": "Carlos",
+        ///             "email": "Carlos123@gmail.com",
+        ///             "cpf": "999.999.999-99",
+        ///             "phone": "(41)99999-9999",
+        ///             "dataNascimento": "1980-04-20"
+        ///         }
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
         public async Task<ActionResult<Donor>> GetDonorById(Guid id)
         {
-            var donor = await _donorService.GetByIdAsync(id);
+            var donor = await _donorService.GetDonorByIdAsync(id);
             if (donor == null)
             {
                 return NotFound("Nenhum doador foi encontrado");

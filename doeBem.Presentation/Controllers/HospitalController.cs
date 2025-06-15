@@ -26,7 +26,7 @@ namespace doeBem.Presentation.Controllers
         /// <remarks>
         /// Exemplo de request: 
         /// 
-        ///         GET api/Hospital
+        ///         GET api/Hospital/WithDonations
         ///         
         /// Exemplo de resposta:
         ///     
@@ -73,13 +73,65 @@ namespace doeBem.Presentation.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet]
-        public async Task<ActionResult<Hospital>> GetAllHospitals()
+        [HttpGet("WithDonations")]
+        public async Task<ActionResult<Hospital>> GetAllHospitalsWithDonations()
         {
 
-            var hospitals =  await _hospitalService.GetAllAsync();
+            var hospitals =  await _hospitalService.GetAllWithDonationsAsync();
 
             if(hospitals == null)
+            {
+                return NotFound("Nenhum Hospital encontrado!");
+            }
+            if (!hospitals.Any())
+            {
+                return NotFound("A lista de Hospitais está vazia!");
+            }
+
+            return Ok(hospitals);
+        }
+
+        /// <summary>
+        /// Realiza o retorno de todos os hospitais registrados no sistema
+        /// </summary>
+        /// <returns>Retorna todos os Hospitais</returns>
+        /// <remarks>
+        /// Exemplo de request: 
+        /// 
+        ///         GET api/Hospital
+        ///         
+        /// Exemplo de resposta:
+        ///     
+        ///     [
+        ///         {
+        ///             "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "nome": "Hospital Pequeno Príncipe",
+        ///             "cnes": "1234567",
+        ///             "estado": "Paraná",
+        ///             "cidade": "Curitiba",
+        ///             "phone": "(41)99999-9999",
+        ///             "descrição": "Descrição"
+        ///         },
+        ///         {
+        ///             "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "nome": "Hospital IPO",
+        ///             "cnes": "1234567",
+        ///             "estado": "Paraná",
+        ///             "cidade": "Curitiba",
+        ///             "phone": "(41)99999-9999",
+        ///             "descrição": "Descrição"
+        ///         }
+        ///     ]
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet]
+        public async Task<ActionResult<HospitalDTO>> GetAllHospitals()
+        {
+
+            var hospitals = await _hospitalService.GetAllHospitalsAsync();
+
+            if (hospitals == null)
             {
                 return NotFound("Nenhum Hospital encontrado!");
             }
@@ -99,7 +151,7 @@ namespace doeBem.Presentation.Controllers
         /// <remarks>
         /// Exemplo de request: 
         /// 
-        ///     GET api/Hospital/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        ///     GET api/Hospital/WithDonations/3fa85f64-5717-4562-b3fc-2c963f66afa6
         ///     
         /// Exemplo de resposta:
         /// 
@@ -123,11 +175,47 @@ namespace doeBem.Presentation.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<HospitalWithDonationsDto>> GetHospitalById(Guid id)
+        [HttpGet("WithDonations/{id}")]
+        public async Task<ActionResult<HospitalWithDonationsDto>> GetHospitalWithDonationsById(Guid id)
         {
-            var hospital = await _hospitalService.GetByIdAsync(id);
+            var hospital = await _hospitalService.GetByIdWithDonationsAsync(id);
             if(hospital == null)
+            {
+                return NotFound("Nenhum hospital com o id foi encontrado");
+            }
+
+            return Ok(hospital);
+        }
+
+        /// <summary>
+        /// Realiza o retorno de um hospital com a id passada
+        /// </summary>
+        /// <param name="id">ID do Hospital que será retornada</param>
+        /// <returns>Retorna o Hospital pelo id que foi informado</returns>
+        /// <remarks>
+        /// Exemplo de request: 
+        /// 
+        ///     GET api/Hospital/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        ///     
+        /// Exemplo de resposta:
+        /// 
+        ///         {
+        ///             "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///             "nome": "Hospital IPO",
+        ///             "cnes": "1234567",
+        ///             "estado": "Paraná",
+        ///             "cidade": "Curitiba",
+        ///             "phone": "(41)99999-9999",
+        ///             "descrição": "Descrição"
+        ///         }
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<HospitalDTO>> GetHospitalById(Guid id)
+        {
+            var hospital = await _hospitalService.GetHospitalByIdAsync(id);
+            if (hospital == null)
             {
                 return NotFound("Nenhum hospital com o id foi encontrado");
             }

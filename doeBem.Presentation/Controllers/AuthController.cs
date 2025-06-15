@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BackendProjeto.Presentation.Controllers
 {
-    [AllowAnonymous]
     [ApiController]
     [Route("api/")]
     ///<sumary>
@@ -22,13 +21,15 @@ namespace BackendProjeto.Presentation.Controllers
         private readonly SignInManager<IdentityUser> _login;
         private readonly TokenService _tokenService;
         private readonly IDonorService _donorService;
+        private readonly IAdminService _adminService;
 
-        public LoginController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> login, TokenService tokenService, IDonorService donorService)
+        public LoginController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> login, TokenService tokenService, IDonorService donorService, IAdminService adminService)
         {
             _userManager = userManager;
             _login = login;
             _tokenService = tokenService;
             _donorService = donorService;
+            _adminService = adminService;
         }
 
         /// <summary>
@@ -48,6 +49,7 @@ namespace BackendProjeto.Presentation.Controllers
         ///        "password": "SenhaSegura123@"
         ///     }
         /// </remarks>
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("Login")]
@@ -87,6 +89,7 @@ namespace BackendProjeto.Presentation.Controllers
         ///     }
         ///     
         /// </remarks>
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("Register/Donor")]
@@ -98,6 +101,43 @@ namespace BackendProjeto.Presentation.Controllers
                 return Ok("Doador cadastrado com sucesso!");
             }
             catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Realiza o cadastro de um administrador
+        /// </summary>
+        /// <param name="adminCreateDto">Objeto contendo os dados do administrador</param>
+        /// <returns>Cadastra o administrador no banco de dados e retorna mensagem de sucesso</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        /// 
+        ///     POST api/Register/Admin
+        ///     
+        ///  Exemplo de Resposta: 
+        ///  
+        ///     {
+        ///        "name": "Administrador",
+        ///        "email": "admin@gmail.com",
+        ///        "password": "SenhaSegura123@"
+        ///     }
+        ///     
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost("Register/Admin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> CadastrarAdministrador(AdminCreateDTO adminCreateDto)
+        {
+            try
+            {
+                await _adminService.RegisterAdmin(adminCreateDto);
+                return Ok("Administrador cadastrado com sucesso!");
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

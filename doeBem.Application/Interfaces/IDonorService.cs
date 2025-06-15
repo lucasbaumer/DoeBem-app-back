@@ -10,8 +10,10 @@ namespace doeBem.Application.Interfaces
 {
     public interface IDonorService
     {
-        Task<DonorWithDonationsDTO> GetByIdAsync(Guid id);
-        Task<IEnumerable<DonorWithDonationsDTO>> GetAllAsync();
+        Task<DonorWithDonationsDTO> GetByIdWithDonationAsync(Guid id);
+        Task<DonorDTO> GetDonorByIdAsync(Guid id);
+        Task<IEnumerable<DonorWithDonationsDTO>> GetAllWithDonationAsync();
+        Task<IEnumerable<DonorDTO>> GetAllDonorsAsync();
         Task<Guid> RegisterDonor(DonorCreateDTO CreateDonorDto);
         Task<bool> UpdateDonor(Guid id, DonorUpdateDTO updateDonorDto);
         Task<bool> DeleteDonor(Guid id);

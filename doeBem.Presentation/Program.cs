@@ -48,7 +48,10 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+
+        RoleClaimType = ClaimTypes.Role,
+        NameClaimType = ClaimTypes.NameIdentifier
     };
 
     options.Events = new JwtBearerEvents
@@ -83,6 +86,7 @@ builder.Services.AddScoped<IHospitalService, HospitalService>();
 builder.Services.AddScoped<IDonationRepository, DonationRepository>();
 builder.Services.AddScoped<IDonationService, DonationService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -157,8 +161,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
-
 await CreateRoles(app.Services);
 
 async Task CreateRoles(IServiceProvider serviceProvider)
@@ -167,13 +169,17 @@ async Task CreateRoles(IServiceProvider serviceProvider)
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
     string[] roles = { "Admin", "Donor" };
-    
-    foreach(var role in roles)
+
+    foreach (var role in roles)
     {
-        if(!await roleManager.RoleExistsAsync(role))
+        if (!await roleManager.RoleExistsAsync(role))
         {
             await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
 }
+
+app.Run();
+
+
 

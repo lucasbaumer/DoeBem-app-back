@@ -40,7 +40,7 @@ namespace doeBem.Application.Services
             return true; 
         }
 
-        public async Task<IEnumerable<DonorWithDonationsDTO>> GetAllAsync()
+        public async Task<IEnumerable<DonorWithDonationsDTO>> GetAllWithDonationAsync()
         {
             var donors = await _donorRepository.GetAllAsync();
 
@@ -63,7 +63,22 @@ namespace doeBem.Application.Services
             });
         }
 
-        public async Task<DonorWithDonationsDTO> GetByIdAsync(Guid id)
+        public async Task<IEnumerable<DonorDTO>> GetAllDonorsAsync()
+        {
+            var donors = await _donorRepository.GetAllAsync();
+
+            return donors.Select(d => new DonorDTO
+            {
+                Id = d.Id,
+                Name = d.Name,
+                Cpf = d.Cpf,
+                Phone = d.Phone,
+                Email = d.Email,
+                DateOfBirth = d.DateOfBirth.ToString("yyyy-MM-dd")
+            });
+        }
+
+        public async Task<DonorWithDonationsDTO> GetByIdWithDonationAsync(Guid id)
         {
             var donor = await _donorRepository.GetByIdAsync(id);
 
@@ -89,6 +104,26 @@ namespace doeBem.Application.Services
                     HospitalName = dn.Hospital?.Name
                 }).ToList()
             }; 
+        }
+
+        public async Task<DonorDTO> GetDonorByIdAsync(Guid id)
+        {
+            var donor = await _donorRepository.GetByIdAsync(id);
+
+            if (donor == null)
+            {
+                return null;
+            }
+
+            return new DonorDTO
+            {
+                Id = donor.Id,
+                Name = donor.Name,
+                Cpf = donor.Cpf,
+                Phone = donor.Phone,
+                Email = donor.Email,
+                DateOfBirth = donor.DateOfBirth.ToString("yyyy-MM-dd")
+            };
         }
 
         public async Task<Guid> RegisterDonor(DonorCreateDTO donorCreateDto)

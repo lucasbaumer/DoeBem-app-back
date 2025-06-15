@@ -41,7 +41,23 @@ namespace doeBem.Application.Services
             return true;
         }
 
-        public async Task<IEnumerable<HospitalWithDonationsDto>> GetAllAsync()
+        public async Task<IEnumerable<HospitalDTO>> GetAllHospitalsAsync()
+        {
+            var hospitals = await _hospitalRepository.GetAllAsync();
+
+            return hospitals.Select(h => new HospitalDTO
+            {
+                Id = h.Id,
+                Name = h.Name,
+                CNES = h.CNES,
+                State = h.State,
+                City = h.City,
+                Phone = h.Phone,
+                Description = h.Description
+            }).ToList();
+        }
+
+        public async Task<IEnumerable<HospitalWithDonationsDto>> GetAllWithDonationsAsync()
         {
             var hospitals = await _hospitalRepository.GetAllAsync();
 
@@ -65,7 +81,7 @@ namespace doeBem.Application.Services
             }).ToList();
         }
 
-        public async Task<HospitalWithDonationsDto> GetByIdAsync(Guid id)
+        public async Task<HospitalWithDonationsDto> GetByIdWithDonationsAsync(Guid id)
         {
             var hospital = await _hospitalRepository.GetByIdAsync(id);
 
@@ -94,6 +110,27 @@ namespace doeBem.Application.Services
                 }).ToList()
 
 
+            };
+        }
+
+        public async Task<HospitalDTO> GetHospitalByIdAsync(Guid id)
+        {
+            var hospital = await _hospitalRepository.GetByIdAsync(id);
+
+            if (hospital == null)
+            {
+                throw new Exception("Hospital com o id selecinado nao existe!");
+            }
+
+            return new HospitalDTO
+            {
+                Id = hospital.Id,
+                Name = hospital.Name,
+                CNES = hospital.CNES,
+                State = hospital.State,
+                City = hospital.City,
+                Phone = hospital.Phone,
+                Description = hospital.Description
             };
         }
 
