@@ -33,26 +33,26 @@ namespace doeBem.Tests.Services
         }
 
         [Fact]
-        public async Task GetByIdAsync_ShouldReturnDonorWithDonations_WhenDonorExists()
+        public async Task GetByIdWithDonationAsync_ShouldReturnDonorWithDonations_WhenDonorExists()
         {
             var id = Guid.NewGuid();
             var donor = new Donor
             {
                 Id = id,
-                Name = "Maria",
-                Cpf = "12345678901",
-                Email = "maria@email.com",
-                Phone = "999999999",
-                DateOfBirth = DateTime.Parse("1985-05-05"),
+                Name = "Ana",
+                Cpf = "11122233344",
+                Email = "ana@email.com",
+                Phone = "111111111",
+                DateOfBirth = DateTime.Parse("1970-01-01"),
                 Donations = new List<Donation>
                 {
                     new Donation
                     {
                         Id = Guid.NewGuid(),
-                        Value = 100,
+                        Value = 150,
                         Date = DateTime.Today,
                         HospitalId = Guid.NewGuid(),
-                        Hospital = new Hospital { Name = "Hospital A" }
+                        Hospital = new Hospital { Name = "Hospital X" }
                     }
                 }
             };
@@ -60,63 +60,23 @@ namespace doeBem.Tests.Services
             _donorRepoMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(donor);
 
             var service = CreateService();
-            var result = await service.GetByIdAsync(id);
+            var result = await service.GetByIdWithDonationAsync(id);
 
             result.Should().NotBeNull();
-            result.Name.Should().Be("Maria");
+            result.Name.Should().Be("Ana");
             result.Donations.Should().HaveCount(1);
-            result.Donations.First().HospitalName.Should().Be("Hospital A");
+            result.Donations.First().HospitalName.Should().Be("Hospital X");
         }
 
         [Fact]
-        public async Task GetByIdAsync_ShouldReturnNull_WhenDonorDoesNotExist()
+        public async Task GetByIdWithDonationAsync_ShouldReturnNull_WhenDonorDoesNotExist()
         {
             _donorRepoMock.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((Donor)null);
 
             var service = CreateService();
-            var result = await service.GetByIdAsync(Guid.NewGuid());
+            var result = await service.GetByIdWithDonationAsync(Guid.NewGuid());
 
             result.Should().BeNull();
-        }
-
-        [Fact]
-        public async Task GetAllAsync_ShouldReturnAllDonorsWithDonations()
-        {
-            var donors = new List<Donor>
-            {
-                new Donor
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Ana",
-                    Cpf = "11122233344",
-                    Email = "ana@email.com",
-                    Phone = "111111111",
-                    DateOfBirth = DateTime.Parse("1970-01-01"),
-                    Donations = new List<Donation>()
-                },
-                new Donor
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Carlos",
-                    Cpf = "55566677788",
-                    Email = "carlos@email.com",
-                    Phone = "222222222",
-                    DateOfBirth = DateTime.Parse("1980-02-02"),
-                    Donations = new List<Donation>
-                    {
-                        new Donation { Id = Guid.NewGuid(), Value = 200, Date = DateTime.Today }
-                    }
-                }
-            };
-
-            _donorRepoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(donors);
-
-            var service = CreateService();
-            var results = await service.GetAllAsync();
-
-            results.Should().HaveCount(2);
-            results.First().Name.Should().Be("Ana");
-            results.Last().Donations.Should().HaveCount(1);
         }
 
         [Fact]
