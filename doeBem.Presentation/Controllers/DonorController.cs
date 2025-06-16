@@ -228,60 +228,6 @@ namespace doeBem.Presentation.Controllers
             return Ok(donor);
         }
 
-        /// <summary>
-        /// Retorna os dados do usuário logado
-        /// </summary>
-        /// <returns>Informações pessoais e role</returns>
-        /// <remarks>
-        /// Exemplo de request:
-        /// 
-        ///     GET api/Donor/User/Profile
-        /// 
-        /// Exemplo de resposta:
-        /// 
-        ///     {
-        ///         "name": "Carlos",
-        ///         "email": "Carlos123@gmail.com",
-        ///         "phone": "(41)99999-9999",
-        ///         "cpf": "999.999.999-99",
-        ///         "dateOfBirth": "1980-04-20",
-        ///         "role": "Admin"
-        ///     }
-        /// </remarks>
-
-        [HttpGet("User/Profile")]
-        public async Task<IActionResult> GetUserProfile()
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized("Usuário não encontrado no token.");
-
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return NotFound("Usuário não encontrado.");
-
-            var roles = await _userManager.GetRolesAsync(user);
-            var role = roles.FirstOrDefault() ?? "Donor";
-
-            var donor = await _donorService.GetDonorByEmailAsync(user.Email);
-            if (donor == null)
-                return NotFound("Dados do usuário não encontrados.");
-
-            var response = new
-            {
-                Name = donor.Name,
-                Email = donor.Email,
-                Phone = donor.Phone,
-                Cpf = donor.Cpf,
-                DateOfBirth = donor.DateOfBirth,
-                Role = role
-            };
-
-            return Ok(response);
-        }
-
-
     /// <summary>
     /// Realiza a edição de um doador
     /// </summary>

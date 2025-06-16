@@ -6,6 +6,7 @@ using doeBem.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BackendProjeto.Presentation.Controllers
 {
@@ -142,5 +143,78 @@ namespace BackendProjeto.Presentation.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Retorna os dados do usuário logado
+        /// </summary>
+        /// <returns>Informações pessoais e role</returns>
+        /// <remarks>
+        /// Exemplo de request:
+        /// 
+        ///     GET api/User/Profile
+        /// 
+        /// Exemplo de resposta:
+        /// 
+        ///     {
+        ///         "name": "Carlos",
+        ///         "email": "Carlos123@gmail.com",
+        ///         "phone": "(41)99999-9999",
+        ///         "cpf": "999.999.999-99",
+        ///         "dateOfBirth": "1980-04-20",
+        ///         "role": "User"
+        ///     }
+        /// </remarks>
+
+        [Authorize]
+        [HttpGet("User/Profile")]
+        public async Task<IActionResult> GetUserProfile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Usuário não encontrado no token.");
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound("Usuário não encontrado.");
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault() ?? "Donor";
+
+            if (role == "Donor")
+            {
+                var donor = await _donorService.GetDonorByEmailAsync(user.Email);
+                if (donor == null)
+                    return NotFound("Dados do doador não encontrados.");
+
+                var profile = new UserProfileDTO
+                {
+                    Name = donor.Name,
+                    Email = donor.Email,
+                    Phone = donor.Phone,
+                    Cpf = donor.Cpf,
+                    DateOfBirth = donor.DateOfBirth,
+                    Role = role
+                };
+
+                return Ok(profile);
+            }
+            else if (role == "Admin")
+            {
+                var profile = new UserProfileDTO
+                {
+                    Name = user.UserName,
+                    Email = user.Email,
+                    Phone = "Sem telefone",
+                    Cpf = "Sem CPF",
+                    DateOfBirth = "Sem Data",
+                    Role = role
+                };
+
+                return Ok(profile);
+            }
+
+            return BadRequest("Role não reconhecida.");
+        }   
     }
 }
