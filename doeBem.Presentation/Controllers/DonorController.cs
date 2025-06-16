@@ -26,7 +26,7 @@ namespace doeBem.Presentation.Controllers
         }
 
         /// <summary>
-        /// Realiza o retorno de todas os doadores registrados no sistema com suas doações
+        /// Realiza o retorno de todas os doadores com suas doações registrados no sistema
         /// </summary>
         /// <returns>Retorna todos os doadores e suas doações</returns>
         /// <remarks>
@@ -98,7 +98,7 @@ namespace doeBem.Presentation.Controllers
         }
 
         /// <summary>
-        /// Realiza o retorno de todas os doadores registrados no sistema
+        /// Realiza o retorno de todas os doadores sem suas doações registrados no sistema
         /// </summary>
         /// <returns>Retorna todos os doadores</returns>
         /// <remarks>
@@ -148,7 +148,7 @@ namespace doeBem.Presentation.Controllers
         }
 
         /// <summary>
-        /// Realiza o retorno de um doador com o id passado
+        /// Realiza o retorno de um doador com suas doações pelo id passado
         /// </summary>
         /// <param name="id">ID do doador que será retornada</param>
         /// <returns>Retorna o doador pelo id que foi informado com suas doações</returns>
@@ -194,7 +194,7 @@ namespace doeBem.Presentation.Controllers
         }
 
         /// <summary>
-        /// Realiza o retorno de um doador com o id passado
+        /// Realiza o retorno de um doador sem suas doações pelo id passado
         /// </summary>
         /// <param name="id">ID do doador que será retornada</param>
         /// <returns>Retorna o doador pelo id que foi informado</returns>

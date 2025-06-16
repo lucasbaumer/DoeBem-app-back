@@ -20,7 +20,7 @@ namespace doeBem.Presentation.Controllers
         }
 
         /// <summary>
-        /// Realiza o retorno de todos os hospitais registrados no sistema
+        /// Realiza o retorno de todos os hospitais com as doações recebidas registrados no sistema
         /// </summary>
         /// <returns>Retorna todos os Hospitais e as doações recebidas</returns>
         /// <remarks>
@@ -92,7 +92,7 @@ namespace doeBem.Presentation.Controllers
         }
 
         /// <summary>
-        /// Realiza o retorno de todos os hospitais registrados no sistema
+        /// Realiza o retorno de todos os hospitais sem doações recebidas registrados no sistema
         /// </summary>
         /// <returns>Retorna todos os Hospitais</returns>
         /// <remarks>
@@ -144,7 +144,7 @@ namespace doeBem.Presentation.Controllers
         }
 
         /// <summary>
-        /// Realiza o retorno de um hospital com a id passada
+        /// Realiza o retorno de um hospital e as doações recebidas com a id passada
         /// </summary>
         /// <param name="id">ID do Hospital que será retornada</param>
         /// <returns>Retorna o Hospital pelo id que foi informado e as doações recebidas</returns>
@@ -188,7 +188,7 @@ namespace doeBem.Presentation.Controllers
         }
 
         /// <summary>
-        /// Realiza o retorno de um hospital com a id passada
+        /// Realiza o retorno de um hospital sem doações recebidas com a id passada
         /// </summary>
         /// <param name="id">ID do Hospital que será retornada</param>
         /// <returns>Retorna o Hospital pelo id que foi informado</returns>
