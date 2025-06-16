@@ -62,10 +62,10 @@ namespace BackendProjeto.Presentation.Controllers
             if (usuario != null && senha)
             {
                 var token = await _tokenService.GenerateToken(usuario);
-                return Ok(token);
+                return Ok(new { token = token });
             }
 
-            return Unauthorized();
+            return Unauthorized(new { message = "Não autorizado" });
         }
 
         /// <summary>
@@ -99,11 +99,11 @@ namespace BackendProjeto.Presentation.Controllers
             try
             {
                 await _donorService.RegisterDonor(donorCreateDto);
-                return Ok("Doador cadastrado com sucesso!");
+                return Ok(new { message = "Doador cadastrado com sucesso!" });
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
         }
 
@@ -130,17 +130,17 @@ namespace BackendProjeto.Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("Register/Admin")]
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public async Task<ActionResult> CadastrarAdministrador(AdminCreateDTO adminCreateDto)
         {
             try
             {
                 await _adminService.RegisterAdmin(adminCreateDto);
-                return Ok("Administrador cadastrado com sucesso!");
+                return Ok(new { message = "Administrador cadastrado com sucesso!" });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
         }
 

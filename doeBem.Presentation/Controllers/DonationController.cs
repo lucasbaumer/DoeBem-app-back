@@ -59,12 +59,12 @@ namespace doeBem.Presentation.Controllers
 
             if (donations == null)
             {
-                return NotFound("Nenhuma doação encontrada!");
+                return NotFound(new { message = "Nenhuma doação encontrada!" });
             }
 
             if (!donations.Any())
             {
-                return NotFound("A lista de doações está vazia");
+                return NotFound(new { message = "A lista de doações está vazia" });
             }
 
             return Ok(donations);
@@ -100,7 +100,7 @@ namespace doeBem.Presentation.Controllers
             var donation = await _donationService.GetByIdAsync(id);
             if (donation == null)
             {
-                return NotFound("Nenhuma doação foi encontrada");
+                return NotFound(new { message = "Nenhuma doação foi encontrada" });
             }
 
             return Ok(donation);
@@ -140,7 +140,7 @@ namespace doeBem.Presentation.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest($"Erro ao cadastrar doação: {e.Message}");
+                return BadRequest(new { message = $"Erro ao cadastrar doação: {e.Message}" });
             }
         }
 
@@ -172,11 +172,11 @@ namespace doeBem.Presentation.Controllers
             try
             {
                 var result = await _donationService.UpdateDonation(id, donationUpdateDto);
-                return result ? Ok("Doação atualizada com sucesso!") : BadRequest("Erro ao atualizar doação!");
+                return result ? Ok(new { message = "Doação atualizada com sucesso!" }) : BadRequest(new { message = "Erro ao atualizar doação!" });
             }
             catch (Exception e)
             {
-                return BadRequest($"Erro: {e.Message}");
+                return BadRequest(new { message = $"Erro: {e.Message}" });
             }
         }
 
@@ -199,10 +199,10 @@ namespace doeBem.Presentation.Controllers
             var result = await _donationService.DeleteDonation(id);
             if (result)
             {
-                return Ok("Doação removida com sucesso!");
+                return Ok(new { message = "Doação removida com sucesso!" });
             }
 
-            return BadRequest("Erro ao remover doação!");
+            return BadRequest(new { message = "Erro ao remover doação!" });
         }
     }
 }
