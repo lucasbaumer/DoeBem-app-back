@@ -153,27 +153,28 @@ namespace BackendProjeto.Presentation.Controllers
         /// 
         ///     GET api/User/Profile
         /// 
-        /// Exemplo de resposta de Usuario:
+        /// Exemplo de resposta:
         /// 
+        ///     doador:
         ///     {
-        ///         "Id": 
+        ///         "Id": 3fa85f64-5717-4562-b3fc-2c963f66afa6,
         ///         "name": "Carlos",
         ///         "email": "Carlos123@gmail.com",
         ///         "phone": "(41)99999-9999",
         ///         "cpf": "999.999.999-99",
         ///         "dateOfBirth": "1980-04-20",
-        ///         "role": "User"
-        ///     }
-        ///    
-        /// Exemplo de resposta de Administrador:
+        ///         "role": "Donor"
+        ///     },
+        ///     
+        ///     Administrador:
         ///     {
-        ///         "Id": 
+        ///         "Id": 3fa85f64-5717-4562-b3fc-2c963f66afa6,
         ///         "name": "Carlos",
         ///         "email": "Carlos123@gmail.com",
         ///         "phone": "(41)99999-9999",
         ///         "cpf": "999.999.999-99",
         ///         "dateOfBirth": "1980-04-20",
-        ///         "role": "User"
+        ///         "role": "Admin"
         ///     }
         /// </remarks>
 
