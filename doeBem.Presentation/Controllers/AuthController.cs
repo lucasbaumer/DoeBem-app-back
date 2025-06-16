@@ -153,9 +153,21 @@ namespace BackendProjeto.Presentation.Controllers
         /// 
         ///     GET api/User/Profile
         /// 
-        /// Exemplo de resposta:
+        /// Exemplo de resposta de Usuario:
         /// 
         ///     {
+        ///         "Id": 
+        ///         "name": "Carlos",
+        ///         "email": "Carlos123@gmail.com",
+        ///         "phone": "(41)99999-9999",
+        ///         "cpf": "999.999.999-99",
+        ///         "dateOfBirth": "1980-04-20",
+        ///         "role": "User"
+        ///     }
+        ///    
+        /// Exemplo de resposta de Administrador:
+        ///     {
+        ///         "Id": 
         ///         "name": "Carlos",
         ///         "email": "Carlos123@gmail.com",
         ///         "phone": "(41)99999-9999",
@@ -189,6 +201,7 @@ namespace BackendProjeto.Presentation.Controllers
 
                 var profile = new UserProfileDTO
                 {
+                    Id = donor.Id,
                     Name = donor.Name,
                     Email = donor.Email,
                     Phone = donor.Phone,
@@ -203,6 +216,7 @@ namespace BackendProjeto.Presentation.Controllers
             {
                 var profile = new UserProfileDTO
                 {
+                    Id = Guid.Parse(user.Id),
                     Name = user.UserName,
                     Email = user.Email,
                     Phone = "Sem telefone",
