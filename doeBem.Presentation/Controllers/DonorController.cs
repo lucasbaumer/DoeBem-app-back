@@ -2,9 +2,11 @@
 using doeBem.Application.Interfaces;
 using doeBem.Core.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace doeBem.Presentation.Controllers
@@ -15,10 +17,12 @@ namespace doeBem.Presentation.Controllers
     public class DonorController : ControllerBase
     {
         private readonly IDonorService _donorService;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public DonorController(IDonorService donorService)
+        public DonorController(IDonorService donorService, UserManager<IdentityUser> userManager)
         {
             _donorService = donorService;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -225,65 +229,120 @@ namespace doeBem.Presentation.Controllers
         }
 
         /// <summary>
-        /// Realiza a edição de um doador
+        /// Retorna os dados do usuário logado
         /// </summary>
-        /// <param name="id">ID do doador que será atualizado</param>
-        /// <returns>Edita o doador pelo id que foi informado </returns>
-        /// <remarks>
-        /// Exemplo de request: 
-        /// 
-        ///     PUT api/Donor/3fa85f64-5717-4562-b3fc-2c963f66afa6
-        ///     
-        /// Exemplo de resposta:
-        /// 
-        ///       {
-        ///          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        ///          "nome": "Carlos",
-        ///          "email": "Carlos123@gmail.com",
-        ///          "cpf": "999.999.999-99",
-        ///          "phone": "(41)99999-9999",
-        ///          "dataNascimento": "1980-04-20",
-        ///       }
-        /// </remarks>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDonor(Guid id, DonorUpdateDTO DonorUpdateDto)
-        {
-            try
-            {
-                var result = await _donorService.UpdateDonor(id, DonorUpdateDto);
-                return result ? Ok("Doador atualizado com sucesso!") : BadRequest("Erro ao atualizar doador!");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Erro: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Realiza a exlusão de um doador do sistema
-        /// </summary>
-        /// <param name="id">ID do doador que será excluída</param>
-        /// <returns>exclui um doador correspondente ao id que foi informado</returns>
+        /// <returns>Informações pessoais e role</returns>
         /// <remarks>
         /// Exemplo de request:
         /// 
-        ///     DELETE api/Donor/3fa85f64-5717-4562-b3fc-2c963f66afa6
-        ///     
+        ///     GET api/Donor/User/Profile
+        /// 
+        /// Exemplo de resposta:
+        /// 
+        ///     {
+        ///         "name": "Carlos",
+        ///         "email": "Carlos123@gmail.com",
+        ///         "phone": "(41)99999-9999",
+        ///         "cpf": "999.999.999-99",
+        ///         "dateOfBirth": "1980-04-20",
+        ///         "role": "Admin"
+        ///     }
         /// </remarks>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDonor(Guid id)
-            
+
+        [HttpGet("User/Profile")]
+        public async Task<IActionResult> GetUserProfile()
         {
-            var result = await _donorService.DeleteDonor(id);
-            if (result)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Usuário não encontrado no token.");
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound("Usuário não encontrado.");
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault() ?? "Donor";
+
+            var donor = await _donorService.GetDonorByEmailAsync(user.Email);
+            if (donor == null)
+                return NotFound("Dados do usuário não encontrados.");
+
+            var response = new
             {
-                return Ok("Doador removido com sucesso!");
+                Name = donor.Name,
+                Email = donor.Email,
+                Phone = donor.Phone,
+                Cpf = donor.Cpf,
+                DateOfBirth = donor.DateOfBirth,
+                Role = role
+            };
+
+            return Ok(response);
+        }
+
+
+    /// <summary>
+    /// Realiza a edição de um doador
+    /// </summary>
+    /// <param name="id">ID do doador que será atualizado</param>
+    /// <returns>Edita o doador pelo id que foi informado </returns>
+    /// <remarks>
+    /// Exemplo de request: 
+    /// 
+    ///     PUT api/Donor/3fa85f64-5717-4562-b3fc-2c963f66afa6
+    ///     
+    /// Exemplo de resposta:
+    /// 
+    ///       {
+    ///          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///          "nome": "Carlos",
+    ///          "email": "Carlos123@gmail.com",
+    ///          "cpf": "999.999.999-99",
+    ///          "phone": "(41)99999-9999",
+    ///          "dataNascimento": "1980-04-20",
+    ///       }
+    /// </remarks>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+            [ProducesResponseType(StatusCodes.Status400BadRequest)]
+            [HttpPut("{id}")]
+            public async Task<IActionResult> UpdateDonor(Guid id, DonorUpdateDTO DonorUpdateDto)
+            {
+                try
+                {
+                    var result = await _donorService.UpdateDonor(id, DonorUpdateDto);
+                    return result ? Ok("Doador atualizado com sucesso!") : BadRequest("Erro ao atualizar doador!");
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest($"Erro: {ex.Message}");
+                }
             }
-            return BadRequest("Erro ao remover doador!");
+
+            /// <summary>
+            /// Realiza a exlusão de um doador do sistema
+            /// </summary>
+            /// <param name="id">ID do doador que será excluída</param>
+            /// <returns>exclui um doador correspondente ao id que foi informado</returns>
+            /// <remarks>
+            /// Exemplo de request:
+            /// 
+            ///     DELETE api/Donor/3fa85f64-5717-4562-b3fc-2c963f66afa6
+            ///     
+            /// </remarks>
+            [ProducesResponseType(StatusCodes.Status200OK)]
+            [ProducesResponseType(StatusCodes.Status400BadRequest)]
+            [HttpDelete("{id}")]
+            public async Task<IActionResult> DeleteDonor(Guid id)
+            
+            {
+                var result = await _donorService.DeleteDonor(id);
+                if (result)
+                {
+                    return Ok("Doador removido com sucesso!");
+                }
+                return BadRequest("Erro ao remover doador!");
+            }
         }
     }
-}
+

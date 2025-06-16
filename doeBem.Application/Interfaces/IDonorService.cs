@@ -12,6 +12,7 @@ namespace doeBem.Application.Interfaces
     {
         Task<DonorWithDonationsDTO> GetByIdWithDonationAsync(Guid id);
         Task<DonorDTO> GetDonorByIdAsync(Guid id);
+        Task<DonorDTO> GetDonorByEmailAsync(string email);
         Task<IEnumerable<DonorWithDonationsDTO>> GetAllWithDonationAsync();
         Task<IEnumerable<DonorDTO>> GetAllDonorsAsync();
         Task<Guid> RegisterDonor(DonorCreateDTO CreateDonorDto);

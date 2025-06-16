@@ -210,5 +210,24 @@ namespace doeBem.Application.Services
             await _donorRepository.UpdateAsync(donor);
             return true;
         }
+
+        public async Task<DonorDTO> GetDonorByEmailAsync(string email)
+        {
+            var donor = await _donorRepository.GetByEmailAsync(email);
+            if(donor == null)
+            {
+                return null;
+            }
+
+            return new DonorDTO
+            {
+                Id = donor.Id,
+                Name = donor.Name,
+                Cpf = donor.Cpf,
+                Phone = donor.Phone,
+                Email = donor.Email,
+                DateOfBirth = donor.DateOfBirth.ToString("yyyy-MM-dd")
+            };
+        }
     }
 }
