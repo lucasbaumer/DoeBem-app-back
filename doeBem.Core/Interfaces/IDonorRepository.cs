@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace doeBem.Core
+namespace doeBem.Core.Interfaces
 {
     public interface IDonorRepository
     {
@@ -14,6 +14,7 @@ namespace doeBem.Core
         Task UpdateAsync(Donor donor);
         Task<Donor> GetByIdAsync(Guid id);
         Task<Donor> GetByEmailAsync(string email);
+        Task<Donor?> GetByCpfAsync(string cpf);
         Task<IEnumerable<Donor>> GetAllAsync();
     }
 }

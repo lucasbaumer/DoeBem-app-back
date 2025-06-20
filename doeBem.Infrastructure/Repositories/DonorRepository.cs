@@ -1,5 +1,5 @@
-﻿using doeBem.Core;
-using doeBem.Core.Entities;
+﻿using doeBem.Core.Entities;
+using doeBem.Core.Interfaces;
 using doeBem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,19 +7,25 @@ namespace doeBem.Infrastructure.Repositories
 {
     public class DonorRepository : IDonorRepository
     {
-        public readonly MyDbContext _context;
-        public DonorRepository(MyDbContext context) 
+        private readonly MyDbContext _context;
+        public DonorRepository(MyDbContext context)
         {
             _context = context;
         }
-       public async Task<Donor> GetByIdAsync(Guid id)
+        public async Task<Donor> GetByIdAsync(Guid id)
         {
-            return await _context.Donors.FindAsync(id);
+            return await _context.Donors
+                .Include(d => d.Donations)
+                .ThenInclude(h => h.Hospital)
+                .FirstOrDefaultAsync(d => d.Id == id);
         }
 
         public async Task<IEnumerable<Donor>> GetAllAsync()
         {
-            return await _context.Donors.ToListAsync();
+            return await _context.Donors
+                .Include(d => d.Donations)
+                .ThenInclude(h => h.Hospital)
+                .ToListAsync();
         }
 
         public async Task AddAsync(Donor donor)
@@ -37,7 +43,7 @@ namespace doeBem.Infrastructure.Repositories
         public async Task DeleteAsync(Guid id)
         {
             var Donor = await _context.Donors.FindAsync(id);
-            if(Donor != null)
+            if (Donor != null)
             {
                 _context.Donors.Remove(Donor);
                 await _context.SaveChangesAsync();
@@ -46,7 +52,12 @@ namespace doeBem.Infrastructure.Repositories
 
         public async Task<Donor> GetByEmailAsync(string email)
         {
-            return await _context.Donors.FirstOrDefaultAsync(e => e.Email == email); 
+            return await _context.Donors.FirstOrDefaultAsync(e => e.Email == email);
+        }
+
+        public async Task<Donor?> GetByCpfAsync (string cpf)
+        {
+            return await _context.Donors.FirstOrDefaultAsync(c => c.Cpf == cpf);
         }
     }
 }

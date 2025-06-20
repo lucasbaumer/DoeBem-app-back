@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace doeBem.Core.Entities
 {
-    public class Donor
+    public class Hospital
     {
         [Key]
         public Guid Id { get; set; }
@@ -16,17 +16,19 @@ namespace doeBem.Core.Entities
         public string Name { get; set; }
 
         [Required]
-        public string Email { get; set; }
+        public int CNES { get; set; }
 
         [Required]
-        public string Cpf { get; set; }
+        public string State { get; set; }
+
+        [Required]
+        public string City { get; set; }
 
         [Required]
         public string Phone { get; set; }
 
-        [Required]
-        public DateTime DateOfBirth { get; set; }
+        public string Description { get; set; }
 
-        public ICollection<Donation> Donations { get; set; } = new List<Donation>();
+        public ICollection<Donation> ReceivedDonations { get; set; } = new List<Donation>();
     }
 }

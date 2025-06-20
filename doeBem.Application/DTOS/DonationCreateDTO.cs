@@ -7,22 +7,16 @@ using System.Threading.Tasks;
 
 namespace doeBem.Application.DTOS
 {
-    public class DonorUpdateDTO
+    public class DonationCreateDTO
     {
         [Required]
-        public string Name { get; set; }
+        public float Value { get; set; }
+        [Required]
+        public string Date { get; set; }
+        [Required]
+        public Guid DonorId { get; set; }
 
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        public string Phone { get; set; }
-
-        [Required]
-        public string Cpf { get; set; }
-
-        [Required]
-        public string DateOfBirth { get; set; }
+        public Guid HospitalId { get; set; }
     }
 }

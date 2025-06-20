@@ -25,7 +25,7 @@ namespace doeBem.Application.DTOS
         public string DateOfBirth { get; set; }
 
         [Required]
-        [MinLength(6, ErrorMessage = "A senha deve ter pelo menos 6 caracteres")]
+        [MinLength(6, ErrorMessage = "6, ErrorMessage =\"A senha deve ter no minimo 6 caracteres, uma letra maiuscula, um numero e um caracter especial\"")]
         public string Password { get; set; }
     }
 }

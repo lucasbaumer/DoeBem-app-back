@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using doeBem.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using doeBem.Infrastructure.Data;
 namespace doeBem.Infrastructure.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250604233745_atualizandoDeleteCascadeHospitalID")]
+    partial class atualizandoDeleteCascadeHospitalID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,8 +243,6 @@ namespace doeBem.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Date");
-
                     b.HasIndex("DonorId");
 
                     b.HasIndex("HospitalId");
@@ -257,14 +258,14 @@ namespace doeBem.Infrastructure.Migrations
 
                     b.Property<string>("Cpf")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -275,12 +276,6 @@ namespace doeBem.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Cpf")
-                        .IsUnique();
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.ToTable("Donors");
                 });
@@ -304,7 +299,7 @@ namespace doeBem.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -315,8 +310,6 @@ namespace doeBem.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name");
 
                     b.ToTable("Hospitals");
                 });
